@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import mysql.connector
+from criando_conexao_bd import conexao_bd
 
 class Escanteios:
     
@@ -103,12 +104,7 @@ class Escanteios:
             
             my_list.append(list_times)
         
-        conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
+        conexao = conexao_bd.conectando()
         cursor = conexao.cursor()
         
         for linha in my_list:

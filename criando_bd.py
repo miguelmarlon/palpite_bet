@@ -4,10 +4,10 @@ from scraping_escanteios import Escanteios
 from scraping_gols_marcados_sofridos import Gols
 
 
-pesquisa_gols= 'Over 1.5'
-pais_teste ='Italy'
-liga_teste= 'Serie A'
-escanteios_teste='7.5'
+# pesquisa_gols= 'Over 1.5'
+# pais_teste ='Italy'
+# liga_teste= 'Serie A'
+# escanteios_teste='7.5'
 
 quantidade_gols = ['Over 1.5', 'Over 2.5', 'Over 3.5']
 quantidade_escanteios = ['7.5','8.5','9.5','10.5', '11.5']

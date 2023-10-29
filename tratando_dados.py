@@ -2,9 +2,12 @@ import mysql.connector
 import pandas as pd
 import telegram
 import asyncio
+from dotenv import load_dotenv
+
+from criando_conexao_bd import conexao_bd
 
 class tratando_dados():
-    j=-1
+    
     def __init__(self, time_casa, time_fora):
         
         self.time_casa = time_casa
@@ -14,12 +17,7 @@ class tratando_dados():
         self.gols_away = None
     
     def excluindo_linhas_duplicadas(self):
-        conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
+        conexao = conexao_bd.conectando()
         cursor = conexao.cursor()
 
         try:
@@ -53,13 +51,8 @@ class tratando_dados():
             conexao.close()
        
     def estatistica_gol(self):
-        conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
         
+        conexao = conexao_bd.conectando()
         cursor = conexao.cursor()
         consulta_time_casa = "SELECT * FROM gols WHERE nome LIKE %s"
         cursor.execute(consulta_time_casa, (f'%{self.time_casa}%',))
@@ -85,13 +78,8 @@ class tratando_dados():
         conexao.close()  
         
     def estatistica_escanteios(self):
-        conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
-        
+       
+        conexao = conexao_bd.conectando()       
         cursor = conexao.cursor()
         consulta_time_casa = "SELECT * FROM escanteios WHERE nome LIKE %s"
         cursor.execute(consulta_time_casa, (f'%{self.time_casa}%',))
@@ -116,13 +104,8 @@ class tratando_dados():
         conexao.close()
     
     def estatistica_filtrada_gol(self):
-        conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
         
+        conexao = conexao_bd.conectando()      
         cursor = conexao.cursor()
         consulta_time_casa = "SELECT * FROM gols WHERE nome LIKE %s"
         cursor.execute(consulta_time_casa, (f'%{self.time_casa}%',))
@@ -171,13 +154,8 @@ class tratando_dados():
         
         
     def estatistica_filtrada_escanteios(self):
-        conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
         
+        conexao = conexao_bd.conectando()
         cursor = conexao.cursor()
         consulta_time_casa = f"SELECT * FROM escanteios WHERE nome = '{self.time_casa}'"
         cursor.execute(consulta_time_casa)

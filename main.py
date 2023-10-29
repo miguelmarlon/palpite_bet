@@ -1,13 +1,18 @@
 from tratando_dados import tratando_dados
 import mysql.connector
+from dotenv import load_dotenv
+import os
+from criando_conexao_bd import conexao_bd
 
- 
-conexao = mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='130889',
-        database='estatisticas',
-        )
+load_dotenv()
+
+conexao = conexao_bd.conectando()
+# conexao = mysql.connector.connect(
+#         host = os.getenv('host'),
+#         user = os.getenv('user'),
+#         password = os.getenv('password'),
+#         database = os.getenv('database'),
+#         )
 
 lista_times= []
 
@@ -48,7 +53,7 @@ for time_casa, time_fora in lista_times:
 conexao.commit()
 conexao.close()
 
-
+a=1
 
 
 
