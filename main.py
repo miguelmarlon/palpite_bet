@@ -7,13 +7,6 @@ from criando_conexao_bd import conexao_bd
 load_dotenv()
 
 conexao = conexao_bd.conectando()
-# conexao = mysql.connector.connect(
-#         host = os.getenv('host'),
-#         user = os.getenv('user'),
-#         password = os.getenv('password'),
-#         database = os.getenv('database'),
-#         )
-
 lista_times= []
 
 print()

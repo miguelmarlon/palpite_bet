@@ -3,6 +3,7 @@ import pandas as pd
 import telegram
 import asyncio
 from dotenv import load_dotenv
+import os
 
 from criando_conexao_bd import conexao_bd
 
@@ -118,8 +119,9 @@ class tratando_dados():
         dados_finais = []
         
         async def enviar_mensagem_telegram(mensagem):
-            bot_token = '6608150715:AAENt1H31xQwgQaTQmUl6qRqKREOjkwj7tI'
-            chat_id = '-4093651715'
+            load_dotenv()
+            bot_token = os.getenv('bot_token')
+            chat_id = os.getenv('chat_id')
             bot = telegram.Bot(token=bot_token)
             await bot.send_message(chat_id=chat_id, text=mensagem)
                         
