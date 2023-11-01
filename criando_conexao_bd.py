@@ -12,5 +12,5 @@ class conexao_bd:
         password = os.getenv('password'),
         database = os.getenv('database'),
         )
-        return conexao 
+        return conexao
     

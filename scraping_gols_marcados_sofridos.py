@@ -88,7 +88,12 @@ class Gols:
         for linha in my_list:
             nome_time, total, casa, fora = linha 
             query = f'INSERT INTO gols (tipo, nome, total, casa, fora) VALUES ("{self.quantidade_gols.replace('Over ','')}", "{nome_time}", "{total}", "{casa}", "{fora}")'
-            cursor.execute(query)
+            try:
+                cursor.execute(query)
+            except mysql.connector.Error as err:
+                print(f"Erro MySQL: {err}")
+                conexao.rollback()
+            
        
         conexao.commit()
         conexao.close()

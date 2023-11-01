@@ -18,6 +18,7 @@ while True:
                 '1 - ENTRAR NA SELEÇÃO DE TIMES\n\n'
                 '2 - ATUALIZAR O BANCO DE DADOS\n\n'
                 '3 - CRIAR O BANCO DE DADOS\n\n'
+                '4 - EXLCUIR LINHAS DUPLICADAS NO BANCO DE DADOS\n\n'
                 'OPÇÃO : ')
     match opcao:
         case '0':
@@ -58,12 +59,27 @@ while True:
             conexao.close()
             
         case '2':
-            objeto = criando_banco_de_dados.atualizando_banco_de_dados_gols()
-        
+            objeto_um = criando_banco_de_dados()
+            objeto_um.atualizando_banco_de_dados_gols()
+            objeto_dois = criando_banco_de_dados()
+            objeto_dois.atualizando_banco_de_dados_escanteios()
+            break
+            
         case '3':
-            objeto_um = criando_banco_de_dados.criando_banco_de_dados_gols()
-            objeto_dois = criando_banco_de_dados.criando_banco_de_dados_escanteios()
+            objeto_um = criando_banco_de_dados()
+            objeto_um.criando_banco_de_dados_gols()
+            objeto_dois = criando_banco_de_dados()
+            objeto_dois.criando_banco_de_dados_escanteios()
+            break
         
+        case '4':
+            objeto_um = criando_banco_de_dados()
+            objeto_um.excluindo_linhas_duplicadas_no_banco_de_dados()
+            
+            break
+                
         case _:
             print('OPÇÃO INVÁLIDA!')
-    break
+
+
+    

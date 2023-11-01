@@ -2,6 +2,8 @@
 from tratando_dados import tratando_dados
 from scraping_escanteios import Escanteios
 from scraping_gols_marcados_sofridos import Gols
+from criando_conexao_bd import conexao_bd
+import mysql.connector
 
 class criando_banco_de_dados:
     
@@ -51,4 +53,54 @@ class criando_banco_de_dados:
                 gols = Gols(pais, liga, gol)
                 dados = gols.atualiza_bd_gols()
                 print (dados)
-        
+    
+    def atualizando_banco_de_dados_escanteios(self):
+        for escanteio in self.quantidade_escanteios:
+            for pais, liga in self.list_pais_escanteios:
+                escanteios = Escanteios(pais, liga, escanteios)
+                dados = escanteios.atualiza_bd_escanteios()
+                print (dados)
+    
+    def excluindo_linhas_duplicadas_no_banco_de_dados(self):
+        conexao = conexao_bd.conectando()
+        cursor = conexao.cursor()
+
+        try:            
+            consulta_criar_temporaria_tabela_gols = """
+            CREATE TABLE gols_temp AS
+            SELECT DISTINCT id, tipo, nome, total, casa, fora
+            FROM gols
+            """
+            cursor.execute(consulta_criar_temporaria_tabela_gols)
+            consulta_excluir_original = "DROP TABLE gols"
+            cursor.execute(consulta_excluir_original)
+            
+            consulta_renomear = "RENAME TABLE gols_temp TO gols"
+            cursor.execute(consulta_renomear)
+
+            conexao.commit()
+            print("Linhas duplicadas da tabela gols excluídas com sucesso!")
+            
+            consulta_criar_temporaria_tabela_escanteios = """
+            CREATE TABLE escanteios_temp AS
+            SELECT DISTINCT id, tipo, nome, total, casa, fora
+            FROM gols
+            """
+            cursor.execute(consulta_criar_temporaria_tabela_escanteios)
+            consulta_excluir_original = "DROP TABLE escanteios"
+            cursor.execute(consulta_excluir_original)
+            
+            consulta_renomear = "RENAME TABLE escanteios_temp TO escanteios"
+            cursor.execute(consulta_renomear)
+
+            conexao.commit()
+            print("Linhas duplicadas da tabela escanteios excluídas com sucesso!")
+
+        except mysql.connector.Error as e:
+            conexao.rollback()
+            print(f"Erro ao excluir linhas duplicadas: {e}")
+
+        finally:
+            # Fechar o cursor e a conexão
+            cursor.close()
+            conexao.close()
