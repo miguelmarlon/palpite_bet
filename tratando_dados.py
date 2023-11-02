@@ -1,4 +1,3 @@
-import mysql.connector
 import pandas as pd
 import telegram
 import asyncio
@@ -96,7 +95,6 @@ class tratando_dados():
             total = (float(tupla1[3]) + float(tupla2[3])) / 2
             casa_vs_visitante = (float(tupla1[4]) + float(tupla2[5])) / 2
             dados_finais.append((chave, total, casa_vs_visitante))
-
         
         df = pd.DataFrame(dados_finais, columns=['gols', 'total', 'casavisitante'])             
         
@@ -114,7 +112,7 @@ class tratando_dados():
                     
         cursor.close()
         conexao.close()
-        
+     
         
     def estatistica_filtrada_escanteios(self):
         
@@ -147,14 +145,14 @@ class tratando_dados():
         df = pd.DataFrame(dados_finais, columns=['escanteios', 'total', 'casavisitante'])
                 
         df_filtrado = df[(df['total'] >= 75) & (df['casavisitante'] >= 75)]    
-        
-        df_filtrado['media_entre_total_casavistante'] = df_filtrado[['total', 'casavisitante']].mean(axis=1)
-        mensagem = f"Chances para {self.time_casa} vs {self.time_fora}:\n\n"
-        for index, row in df_filtrado.iterrows():
-            escanteios = row['escanteios']
-            media_final_escanteios = row['media_entre_total_casavistante']
-            print(f'Escanteios: {escanteios} probabilidade {media_final_escanteios}')
-            mensagem += f"Escanteios {escanteios}: {media_final_escanteios}%\n"
+               
+        if not df_filtrado.empty:
+            mensagem = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
+            for index, row in df_filtrado.iterrows():
+                escanteios = row['escanteios']
+                casavisitante = row['casavisitante']
+                print(f'Escanteios: {escanteios} probabilidade {casavisitante}')               
+                mensagem += f"Escanteios {escanteios}: {casavisitante}% 🎌\n"
             
         loop = asyncio.get_event_loop()
         loop.run_until_complete(enviar_mensagem_telegram(mensagem))
