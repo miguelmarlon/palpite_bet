@@ -82,28 +82,28 @@ while True:
                     break
                 
             for time_casa, time_fora in lista_times:    
-                objeto = tratando_dados(time_casa, time_fora)       
-                df_gols = objeto.estatistica_filtrada_gol()
-                df_escanteios = objeto.estatistica_filtrada_escanteios()
+                tratando_dados_objeto = tratando_dados(time_casa, time_fora)       
+                df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
+                df_escanteios = tratando_dados_objeto.estatistica_filtrada_escanteios()
             exit()
             
         case '2':
-            objeto_um = criando_banco_de_dados()
-            objeto_um.atualizando_banco_de_dados_gols()
-            objeto_dois = criando_banco_de_dados()
-            objeto_dois.atualizando_banco_de_dados_escanteios()
+            criando_banco_de_dados_gols_obj = criando_banco_de_dados()
+            criando_banco_de_dados_gols_obj.atualizando_banco_de_dados_gols()
+            criando_banco_de_dados_escanteios_obj = criando_banco_de_dados()
+            criando_banco_de_dados_escanteios_obj.atualizando_banco_de_dados_escanteios()
             break
             
         case '3':
-            objeto_um = criando_banco_de_dados()
-            objeto_um.criando_banco_de_dados_gols()
-            objeto_dois = criando_banco_de_dados()
-            objeto_dois.criando_banco_de_dados_escanteios()
+            criando_banco_de_dados_gols_obj = criando_banco_de_dados()
+            criando_banco_de_dados_gols_obj.criando_banco_de_dados_gols()
+            criando_banco_de_dados_escanteios_obj = criando_banco_de_dados()
+            criando_banco_de_dados_escanteios_obj.criando_banco_de_dados_escanteios()
             break
         
         case '4':
-            objeto_um = criando_banco_de_dados()
-            objeto_um.excluindo_linhas_duplicadas_no_banco_de_dados()
+            criando_banco_de_dados_obj = criando_banco_de_dados()
+            criando_banco_de_dados_obj.excluindo_linhas_duplicadas_no_banco_de_dados()
             
             break
                 

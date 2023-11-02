@@ -104,7 +104,7 @@ class Escanteios:
         
         for linha in my_list:
             nome_time, total, casa, fora = linha 
-            query = f'INSERT INTO escanteios (tipo, nome, total, casa, fora, pais, liga) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+            query = 'INSERT INTO escanteios (tipo, nome, total, casa, fora, pais, liga) VALUES (%s, %s, %s, %s, %s, %s, %s)'
             values = (self.quantidade_escanteios, nome_time, total, casa, fora, self.pais, self.liga)
             cursor.execute(query, values)
        

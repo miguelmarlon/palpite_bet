@@ -26,7 +26,7 @@ class Gols:
         driver = webdriver.Chrome(options=options)
         wait = WebDriverWait(driver, 10)
         driver.get('https://www.adamchoi.co.uk/overs/detailed')
-                
+        sleep(2)        
         my_list=[] 
         lista_estatisticas=[]
         
@@ -83,9 +83,11 @@ class Gols:
         
         for linha in my_list:
             nome_time, total, casa, fora = linha 
-            query = f'INSERT INTO gols (tipo, nome, total, casa, fora) VALUES ("{self.quantidade_gols.replace('Over ','')}", "{nome_time}", "{total}", "{casa}", "{fora}")'
+            #query = f'INSERT INTO gols (tipo, nome, total, casa, fora) VALUES ("{self.quantidade_gols.replace('Over ','')}", "{nome_time}", "{total}", "{casa}", "{fora}")'
+            query = 'INSERT INTO gols (tipo, nome, total, casa, fora, pais, liga) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+            values = (self.quantidade_gols.replace('Over ',''), nome_time, total, casa, fora, self.pais, self.liga)
             try:
-                cursor.execute(query)
+                cursor.execute(query, values)
             except mysql.connector.Error as err:
                 print(f"Erro MySQL: {err}")
                 conexao.rollback()
