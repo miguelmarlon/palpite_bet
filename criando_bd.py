@@ -1,5 +1,4 @@
 
-from tratando_dados import tratando_dados
 from scraping_escanteios import Escanteios
 from scraping_gols_marcados_sofridos import Gols
 from criando_conexao_bd import conexao_bd
@@ -15,12 +14,15 @@ class criando_banco_de_dados:
     quantidade_gols = ['Over 1.5', 'Over 2.5', 'Over 3.5']
     quantidade_escanteios = ['7.5','8.5','9.5','10.5', '11.5']
 
-    list_pais = [['Finland','Finnish Veikkausliiga'],['Italy', 'Serie A'],['England', 'Premier League'],['Spain', 'La Liga'],['Germany','Bundesliga'],['France', 'Ligue 1'],
-                ['Scotland','SPL'],['Netherlands', 'Eredivisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],['Brazil','Serie A'],
+    list_pais = [['Finland','Finnish Veikkausliiga'],['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
+                ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2']['France', 'Ligue 1'],['France', 'Ligue 2'],
+                ['Scotland','SPL'], ['Scotland','Scottish Championship'], ['Scotland','Scottish League 1'], ['Scotland','Scottish League 2'], ['Netherlands', 'Eredivisie'], ['Netherlands', 'Eerste Divisie'], 
+                ['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'], ['Belgium','First Division B'], ['Brazil','Serie A'],['Brazil','Serie B'],
                 ['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],['USA','US MLS'],
                 ['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
-                ['China','Super League'],['Mexico','Liga MX'],['Ukraine','Premier League'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']
-                ]
+                ['China','Super League'],['Mexico','Liga MX'],['Ukraine','Premier League'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]
+    
+     
                 # ['Finland','Finnish Veikkausliiga'] não tem essa liga para corners 
     list_pais_escanteios = [['Italy', 'Serie A'],['England', 'Premier League'],['Spain', 'La Liga'],['Germany','Bundesliga'],['France', 'Ligue 1'],['Scotland','SPL'],
                             ['Netherlands', 'Eredivisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],

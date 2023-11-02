@@ -1,5 +1,4 @@
 import re
-import requests
 from bs4 import BeautifulSoup 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -31,9 +30,7 @@ class Gols:
         
         my_list=[] 
         list_estatisticas=[]
-        button_over = driver.find_element(By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]').click()
-        sleep(1)
-
+        
         button_country = driver.find_element(By.XPATH, '//*[@id="country"]')
         select = Select(button_country)
         sleep(3)
@@ -43,13 +40,15 @@ class Gols:
         select = Select(button_league)
         sleep(3)
         select.select_by_visible_text(self.league)
-
+        
+        button_over = driver.find_element(By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]').click()
+        sleep(1)
+        
         page_content = driver.page_source
         site= BeautifulSoup(page_content, 'html.parser')
         
         busca_times = site.find('div', attrs={'class':'row ng-scope', 'data-ng-if': '!vm.isLoading'})
-        #print(busca_times.prettify())
-        
+                
         for time in busca_times.find_all('div', attrs={'data-ng-repeat': 'team in :refreshStats:vm.teams', 'class':'ng-scope'}):
             time_nome = time.find('div', attrs={'class':'col-lg-3 col-sm-6 col-xs-12 ng-binding'})
             
