@@ -97,8 +97,8 @@ while True:
         case '3':
             objeto_um = criando_banco_de_dados()
             objeto_um.criando_banco_de_dados_gols()
-            # objeto_dois = criando_banco_de_dados()
-            # objeto_dois.criando_banco_de_dados_escanteios()
+            objeto_dois = criando_banco_de_dados()
+            objeto_dois.criando_banco_de_dados_escanteios()
             break
         
         case '4':

@@ -11,9 +11,9 @@ import mysql.connector
 from criando_conexao_bd import conexao_bd
 
 class Gols:
-    def __init__(self, country,  league, quantidade_gols):
-        self.country = country
-        self.league = league
+    def __init__(self, pais,  liga, quantidade_gols):
+        self.pais = pais
+        self.liga = liga
         self.quantidade_gols = quantidade_gols
         
         
@@ -26,23 +26,20 @@ class Gols:
         driver = webdriver.Chrome(options=options)
         wait = WebDriverWait(driver, 10)
         driver.get('https://www.adamchoi.co.uk/overs/detailed')
-        sleep(1)
-        
-        my_list=[] 
-        list_estatisticas=[]
-        
-        button_country = driver.find_element(By.XPATH, '//*[@id="country"]')
-        select = Select(button_country)
-        sleep(3)
-        select.select_by_visible_text(self.country)
                 
-        button_league = driver.find_element(By.XPATH, '//*[@id="league"]')
-        select = Select(button_league)
-        sleep(3)
-        select.select_by_visible_text(self.league)
+        my_list=[] 
+        lista_estatisticas=[]
         
-        button_over = driver.find_element(By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]').click()
-        sleep(1)
+        button_pais = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
+        select = Select(button_pais)
+        select.select_by_visible_text(self.pais)
+                
+        button_liga = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
+        select = Select(button_liga)
+        select.select_by_visible_text(self.liga)
+        
+        button_over = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]'))).click()
+        sleep(2)
         
         page_content = driver.page_source
         site= BeautifulSoup(page_content, 'html.parser')
@@ -72,14 +69,14 @@ class Gols:
             busca_gol_casa = busca_gol_casa_fora[1]
             gols_fora = busca_gol_casa.find('div', attrs= {'class':'progress-bar progress-bar-success ng-binding'}).text.replace('%', '')
             
-            list_estatisticas = [
+            lista_estatisticas = [
                     time_nome,
                     gols_total,
                     gols_casa,
                     gols_fora,
                     ]
             
-            my_list.append(list_estatisticas)
+            my_list.append(lista_estatisticas)
           
         conexao = conexao_bd.conectando()
         cursor = conexao.cursor()
@@ -92,8 +89,7 @@ class Gols:
             except mysql.connector.Error as err:
                 print(f"Erro MySQL: {err}")
                 conexao.rollback()
-            
-       
+        
         conexao.commit()
         conexao.close()
         
@@ -108,29 +104,26 @@ class Gols:
         driver = webdriver.Chrome(options=options)
         wait = WebDriverWait(driver, 10)
         driver.get('https://www.adamchoi.co.uk/overs/detailed')
-        sleep(1)
-        
-        my_list=[] 
-        list_estatisticas=[]
-        button_over = driver.find_element(By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]').click()
-        sleep(1)
-
-        button_country = driver.find_element(By.XPATH, '//*[@id="country"]')
-        select = Select(button_country)
-        sleep(3)
-        select.select_by_visible_text(self.country)
                 
-        button_league = driver.find_element(By.XPATH, '//*[@id="league"]')
-        select = Select(button_league)
-        sleep(3)
-        select.select_by_visible_text(self.league)
+        my_list=[] 
+        lista_estatisticas=[]
+       
+        button_pais = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
+        select = Select(button_pais)
+        select.select_by_visible_text(self.pais)
+                
+        button_liga = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
+        select = Select(button_liga)
+        select.select_by_visible_text(self.liga)
+        
+        button_over = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]'))).click()
+        sleep(2)
 
         page_content = driver.page_source
         site= BeautifulSoup(page_content, 'html.parser')
         
         busca_times = site.find('div', attrs={'class':'row ng-scope', 'data-ng-if': '!vm.isLoading'})
-        
-        
+                
         for time in busca_times.find_all('div', attrs={'data-ng-repeat': 'team in :refreshStats:vm.teams', 'class':'ng-scope'}):
             time_nome = time.find('div', attrs={'class':'col-lg-3 col-sm-6 col-xs-12 ng-binding'})
             
@@ -154,14 +147,14 @@ class Gols:
             busca_gol_casa = busca_gol_casa_fora[1]
             gols_fora = busca_gol_casa.find('div', attrs= {'class':'progress-bar progress-bar-success ng-binding'}).text.replace('%', '')
             
-            list_estatisticas = [
+            lista_estatisticas = [
                     time_nome,
                     gols_total,
                     gols_casa,
                     gols_fora,
                     ]
             
-            my_list.append(list_estatisticas)
+            my_list.append(lista_estatisticas)
             
         conexao = conexao_bd.conectando()
         cursor = conexao.cursor()

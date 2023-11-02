@@ -1,5 +1,4 @@
 import re
-import requests
 from bs4 import BeautifulSoup 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -13,43 +12,42 @@ import mysql.connector
 
 class Escanteios:
     
-    def __init__(self, pais, league, quantidade_escanteios):
+    def __init__(self, pais, liga, quantidade_escanteios):
         self.pais = pais
-        self.league = league
+        self.liga = liga
         self.quantidade_escanteios= quantidade_escanteios
         
     def cria_bd_escanteios(self):  
         
         my_list= []
-        list_times=[]
+        lista_times=[]
         
         options= Options()
-        options.add_argument('window-size=800,1200')
-              
+        options.add_argument('window-size=800,1200')   
 
         navegador = webdriver.Chrome(options=options)
         wait = WebDriverWait(navegador, 20)
         navegador.get('https://www.adamchoi.co.uk/corners/detailed')
 
-        button_league = navegador.find_element(By.XPATH, '//*[@id="country"]')
+        button_league = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
         select = Select(button_league)
-        sleep(3)
         select.select_by_visible_text(self.pais)
         
-        button_league = navegador.find_element(By.XPATH, '//*[@id="league"]')
+        button_league = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(button_league)
-        sleep(3)
-        select.select_by_visible_text(self.league)
+        select.select_by_visible_text(self.liga)
                 
         select_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="page-wrapper"]/div/div[3]/div/div[2]/div/select')))
         select = Select(select_element)
         select.select_by_visible_text(self.quantidade_escanteios)
+        sleep(3)
 
         page_content = navegador.page_source
         site= BeautifulSoup(page_content, 'html.parser')
 
         busca_times = site.find('div', attrs={'class':'row ng-scope', 'data-ng-if': '!vm.isLoading'})
         times = busca_times.find_all('div', attrs={'data-ng-repeat': 'team in :refreshStats:vm.teams', 'class':'ng-scope'})
+        
         for time in times:
             time_nome = time.find('div', attrs={'class':'col-lg-3 col-sm-6 col-xs-12 ng-binding'})
                         
@@ -92,22 +90,23 @@ class Escanteios:
             else:
                 escanteios_fora = 0      
             
-            list_times = [
+            lista_times = [
             time_nome,
             total_escanteios,
             escanteios_casa,
             escanteios_fora,
             ]
             
-            my_list.append(list_times)
+            my_list.append(lista_times)
         
         conexao = conexao_bd.conectando()
         cursor = conexao.cursor()
         
         for linha in my_list:
             nome_time, total, casa, fora = linha 
-            query = f'INSERT INTO escanteios (tipo, nome, total, casa, fora) VALUES ({self.quantidade_escanteios}, "{nome_time}", "{total}", "{casa}", "{fora}")'
-            cursor.execute(query)
+            query = f'INSERT INTO escanteios (tipo, nome, total, casa, fora, pais, liga) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+            values = (self.quantidade_escanteios, nome_time, total, casa, fora, self.pais, self.liga)
+            cursor.execute(query, values)
        
         conexao.commit()
         conexao.close()
@@ -117,30 +116,28 @@ class Escanteios:
     def atualiza_bd_escanteios(self):  
         
         my_list= []
-        list_times=[]
+        lista_times=[]
         
         options= Options()
-        options.add_argument('window-size=800,1200')
-              
+        options.add_argument('window-size=800,1200')    
 
         navegador = webdriver.Chrome(options=options)
         wait = WebDriverWait(navegador, 20)
         navegador.get('https://www.adamchoi.co.uk/corners/detailed')
 
-        button_league = navegador.find_element(By.XPATH, '//*[@id="country"]')
-        select = Select(button_league)
-        sleep(3)
+        button_pais = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
+        select = Select(button_pais)
         select.select_by_visible_text(self.pais)
         
-        button_league = navegador.find_element(By.XPATH, '//*[@id="league"]')
+        button_league = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(button_league)
-        sleep(3)
-        select.select_by_visible_text(self.league)
+        select.select_by_visible_text(self.liga)
                 
         select_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="page-wrapper"]/div/div[3]/div/div[2]/div/select')))
         select = Select(select_element)
         select.select_by_visible_text(self.quantidade_escanteios)
-
+        sleep(2)
+        
         page_content = navegador.page_source
         site= BeautifulSoup(page_content, 'html.parser')
 
@@ -189,14 +186,14 @@ class Escanteios:
             else:
                 escanteios_fora = 0                 
             
-            list_times = [
+            lista_times = [
             time_nome,
             total_escanteios,
             escanteios_casa,
             escanteios_fora,
             ]
             
-            my_list.append(list_times)
+            my_list.append(lista_times)
         
         conexao = conexao_bd.conectando()
         cursor = conexao.cursor()

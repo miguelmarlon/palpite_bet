@@ -12,23 +12,24 @@ class criando_banco_de_dados:
     # escanteios_teste='7.5'
 
     quantidade_gols = ['Over 1.5', 'Over 2.5', 'Over 3.5']
-    quantidade_escanteios = ['7.5','8.5','9.5','10.5', '11.5']
+    quantidade_escanteios =['10.5', '11.5', '12.5']
 
     list_pais = [['Finland','Finnish Veikkausliiga'],['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
-                ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2']['France', 'Ligue 1'],['France', 'Ligue 2'],
+                ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],
                 ['Scotland','SPL'], ['Scotland','Scottish Championship'], ['Scotland','Scottish League 1'], ['Scotland','Scottish League 2'], ['Netherlands', 'Eredivisie'], ['Netherlands', 'Eerste Divisie'], 
                 ['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'], ['Belgium','First Division B'], ['Brazil','Serie A'],['Brazil','Serie B'],
                 ['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],['USA','US MLS'],
                 ['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
-                ['China','Super League'],['Mexico','Liga MX'],['Ukraine','Premier League'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]
+                ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]
     
      
                 # ['Finland','Finnish Veikkausliiga'] não tem essa liga para corners 
-    list_pais_escanteios = [['Italy', 'Serie A'],['England', 'Premier League'],['Spain', 'La Liga'],['Germany','Bundesliga'],['France', 'Ligue 1'],['Scotland','SPL'],
-                            ['Netherlands', 'Eredivisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],
+    list_pais_escanteios = [['Italy', 'Serie A'],['Italy', 'Serie B'],['England', 'Premier League'],['England', 'Championship'],['England', 'League One'],['England', 'League Two'],['England', 'National League'],['Spain', 'La Liga'],['Spain', 'Segunda Division'],
+                            ['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],['Scotland','SPL'],['Scotland','Scottish Championship'],['Scotland','Scottish League 1'],['Scotland','Scottish League 2'],
+                            ['Netherlands', 'Eredivisie'],['Netherlands', 'Eerste Divisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],
                             ['Brazil','Serie A'],['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],
                             ['USA','US MLS'],['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
-                            ['China','Super League'],['Mexico','Liga MX'],['Ukraine','Premier League'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]                   
+                            ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]                   
 
 
     #criando bando de dados de gols
@@ -86,7 +87,7 @@ class criando_banco_de_dados:
             consulta_criar_temporaria_tabela_escanteios = """
             CREATE TABLE escanteios_temp AS
             SELECT DISTINCT id, tipo, nome, total, casa, fora
-            FROM gols
+            FROM escanteios
             """
             cursor.execute(consulta_criar_temporaria_tabela_escanteios)
             consulta_excluir_original = "DROP TABLE escanteios"
