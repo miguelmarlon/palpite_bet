@@ -3,7 +3,6 @@ import telegram
 import asyncio
 from dotenv import load_dotenv
 import os
-
 from criando_conexao_bd import conexao_bd
 
 class tratando_dados():
@@ -82,7 +81,7 @@ class tratando_dados():
             resultado_fora = cursor.fetchall()
                         
             dados_finais = []
-            
+
             async def enviar_mensagem_telegram(mensagem):
                 load_dotenv()
                 bot_token = os.getenv('bot_token')
@@ -95,29 +94,35 @@ class tratando_dados():
                 total = (float(tupla1[3]) + float(tupla2[3])) / 2
                 casa_vs_visitante = (float(tupla1[4]) + float(tupla2[5])) / 2
                 dados_finais.append((chave, total, casa_vs_visitante))
-            
-            df = pd.DataFrame(dados_finais, columns=['gols', 'total', 'casavisitante'])  
-                    
-            mensagem = ''
-            
-            df_filtrado = df[(df['total'] >= 75) & (df['casavisitante'] >= 75)]
-            if not df_filtrado.empty:
-                mensagem = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
-                for index, row in df_filtrado.iterrows():
+
+            df = pd.DataFrame(dados_finais, columns=['gols', 'total', 'casavisitante'])
+            df_filtrado_gols_acima = df[(df['total'] >= 75) & (df['casavisitante'] >= 75)]
+            df_filtrado_gols_abaixo = df[(df['total'] <= 25) & (df['casavisitante'] <= 25)]
+                                 
+            if not df_filtrado_gols_acima.empty:
+                mensagem_gols_acima = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
+                for index, row in df_filtrado_gols_acima.iterrows():
                     gols = row['gols']
-                    casavisitante = row['casavisitante']
-                    print(f'Gols: {gols} probabilidade {casavisitante}')               
-                    mensagem += f"Gols {gols}: {casavisitante}% 🎯\n"
-                    
+                    casavisitante = row['casavisitante']                                  
+                    mensagem_gols_acima += f"Gols acima de {gols}: {casavisitante}% 🎯\n"
                 loop = asyncio.get_event_loop()
-                loop.run_until_complete(enviar_mensagem_telegram(mensagem))
-                        
+                loop.run_until_complete(enviar_mensagem_telegram(mensagem_gols_acima))
+
+            if not df_filtrado_gols_abaixo.empty:
+                mensagem_gols_abaixo = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
+                for index, row in df_filtrado_gols_abaixo.iterrows():
+                    gols = row['gols']
+                    casavisitante =100 - row['casavisitante']                               
+                    mensagem_gols_abaixo += f"Gols abaixo de {gols}: {casavisitante}% 🎯\n"  
+                loop = asyncio.get_event_loop()
+                loop.run_until_complete(enviar_mensagem_telegram(mensagem_gols_abaixo))
+                    
             cursor.close()
             conexao.close()
             
         except Exception as e:
             print(f'Estatisticas de gols para {self.time_casa} e {self.time_fora} não atenden os requisitos.')
-        
+                        
     def estatistica_filtrada_escanteios(self):
         try:
             conexao = conexao_bd.conectando()
@@ -148,20 +153,32 @@ class tratando_dados():
                     
             df = pd.DataFrame(dados_finais, columns=['escanteios', 'total', 'casavisitante'])
                     
-            df_filtrado = df[(df['total'] >= 75) & (df['casavisitante'] >= 75)]    
-                                       
-            if not df_filtrado.empty:
-                mensagem = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
-                for index, row in df_filtrado.iterrows():
+            df_filtrado_escanteios_acima = df[(df['total'] >= 75) & (df['casavisitante'] >= 75)]    
+            df_filtrado_escanteios_abaixo = df[(df['total'] <= 25) & (df['casavisitante'] <= 25)]
+                                      
+            if not df_filtrado_escanteios_acima.empty:
+                mensagem_escanteios_acima = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
+                for index, row in df_filtrado_escanteios_acima.iterrows():
                     escanteios = row['escanteios']
                     casavisitante = row['casavisitante']
-                    print(f'Escanteios: {escanteios} probabilidade {casavisitante}')               
+                    print(f'Escanteios: acima de {escanteios} probabilidade {casavisitante}')               
                     mensagem += f"Escanteios {escanteios}: {casavisitante}% 🎌\n"
                 
             loop = asyncio.get_event_loop()
-            loop.run_until_complete(enviar_mensagem_telegram(mensagem))
-                            
+            loop.run_until_complete(enviar_mensagem_telegram(mensagem_escanteios_acima))
+            
+            if not df_filtrado_escanteios_abaixo.empty:
+                mensagem_escanteios_abaixo = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
+                for index, row in df_filtrado_escanteios_abaixo.iterrows():
+                    escanteios = row['escanteios']
+                    casavisitante = 100 - row['casavisitante']
+                    print(f'Escanteios: {escanteios} probabilidade {casavisitante}')               
+                    mensagem_escanteios_abaixo += f"Escanteios abaixo de {escanteios}: {casavisitante}% 🎌\n"
+            
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(enviar_mensagem_telegram(mensagem_escanteios_abaixo))
+                          
             cursor.close()
             conexao.close()
         except Exception as e:
-            print(f'Estatisticas de escanteios para {self.time_casa} e {self.time_fora} não atenden os requisitos.')
+            print()

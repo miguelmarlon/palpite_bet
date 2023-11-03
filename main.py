@@ -75,7 +75,7 @@ while True:
                 else:
                     print(f'O TIME {time_casa} NÃO FOI ENCONTRADO!')
                     
-                continuar = input('DIGITE QUALQUER TECLA PARA CONTINUAR OU 2 PARA SAIR:')
+                continuar = input('DIGITE ENTER PARA CONTINUAR OU 2 PARA SAIR:')
                 if continuar == '2':
                     print('AGUARDE UM INSTANTE PARA FINALIZAR:)')
                     print()
@@ -83,7 +83,7 @@ while True:
                 
             for time_casa, time_fora in lista_times:    
                 tratando_dados_objeto = tratando_dados(time_casa, time_fora)       
-                #df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
+                df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
                 df_escanteios = tratando_dados_objeto.estatistica_filtrada_escanteios()
             exit()
             
@@ -110,5 +110,3 @@ while True:
         case _:
             print('OPÇÃO INVÁLIDA!')
 
-a=11
-    
