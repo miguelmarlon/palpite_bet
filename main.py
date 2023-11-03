@@ -83,7 +83,7 @@ while True:
                 
             for time_casa, time_fora in lista_times:    
                 tratando_dados_objeto = tratando_dados(time_casa, time_fora)       
-                df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
+                #df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
                 df_escanteios = tratando_dados_objeto.estatistica_filtrada_escanteios()
             exit()
             
@@ -110,5 +110,5 @@ while True:
         case _:
             print('OPÇÃO INVÁLIDA!')
 
-
+a=11
     
