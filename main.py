@@ -85,7 +85,7 @@ while True:
                 tratando_dados_objeto = tratando_dados(time_casa, time_fora)       
                 df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
                 df_escanteios = tratando_dados_objeto.estatistica_filtrada_escanteios()
-            exit()
+            exit()     
             
         case '2':
             criando_banco_de_dados_gols_obj = criando_banco_de_dados()

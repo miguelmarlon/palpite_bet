@@ -69,17 +69,17 @@ class tratando_dados():
         conexao.close()
     
     def estatistica_filtrada_gol(self):
-        try:
+        
             conexao = conexao_bd.conectando()      
             cursor = conexao.cursor()
             consulta_time_casa = "SELECT * FROM gols WHERE nome LIKE %s"
-            cursor.execute(consulta_time_casa, (f'%{self.time_casa}%',))
+            cursor.execute(consulta_time_casa, (f'%{self.time_casa.lower()}%',))
             resultado_casa = cursor.fetchall()
                             
             consulta_time_fora = "SELECT * FROM gols WHERE nome LIKE %s"
-            cursor.execute(consulta_time_fora, (f'%{self.time_fora}%',))
+            cursor.execute(consulta_time_fora, (f'%{self.time_fora.lower()}%',))
             resultado_fora = cursor.fetchall()
-                        
+                                             
             dados_finais = []
 
             async def enviar_mensagem_telegram(mensagem):
@@ -88,25 +88,29 @@ class tratando_dados():
                 chat_id = os.getenv('chat_id')
                 bot = telegram.Bot(token=bot_token)
                 await bot.send_message(chat_id=chat_id, text=mensagem)
-                            
-            for tupla1, tupla2 in zip(resultado_fora, resultado_casa):
-                chave = tupla1[1]
-                total = (float(tupla1[3]) + float(tupla2[3])) / 2
-                casa_vs_visitante = (float(tupla1[4]) + float(tupla2[5])) / 2
+                                            
+            for tupla_time_casa, tupla_time_fora in zip(resultado_fora, resultado_casa):
+                chave = tupla_time_casa[1]
+                total = (tupla_time_casa[3] + tupla_time_fora[3]) / 2
+                casa_vs_visitante = (tupla_time_casa[4] + tupla_time_fora[5]) / 2
                 dados_finais.append((chave, total, casa_vs_visitante))
 
             df = pd.DataFrame(dados_finais, columns=['gols', 'total', 'casavisitante'])
             df_filtrado_gols_acima = df[(df['total'] >= 75) & (df['casavisitante'] >= 75)]
             df_filtrado_gols_abaixo = df[(df['total'] <= 25) & (df['casavisitante'] <= 25)]
-                                 
+                                  
+            mensagem =''
+            mensagem_gols_acima=''
+            mensagem_gols_abaixo=''       
+            
             if not df_filtrado_gols_acima.empty:
                 mensagem_gols_acima = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
                 for index, row in df_filtrado_gols_acima.iterrows():
                     gols = row['gols']
                     casavisitante = row['casavisitante']                                  
                     mensagem_gols_acima += f"Gols acima de {gols}: {casavisitante}% 🎯\n"
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(enviar_mensagem_telegram(mensagem_gols_acima))
+                mensagem += mensagem_gols_acima
+                
 
             if not df_filtrado_gols_abaixo.empty:
                 mensagem_gols_abaixo = f"Chances para {self.time_casa} vs {self.time_fora} ⚽:\n\n"
@@ -114,15 +118,15 @@ class tratando_dados():
                     gols = row['gols']
                     casavisitante =100 - row['casavisitante']                               
                     mensagem_gols_abaixo += f"Gols abaixo de {gols}: {casavisitante}% 🎯\n"  
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(enviar_mensagem_telegram(mensagem_gols_abaixo))
-                    
+                
+            mensagem += mensagem_gols_abaixo
+            
+            if mensagem:
+                
+                asyncio.run(enviar_mensagem_telegram(mensagem))       
             cursor.close()
             conexao.close()
-            
-        except Exception as e:
-            print(f'Estatisticas de gols para {self.time_casa} e {self.time_fora} não atenden os requisitos.')
-                        
+                              
     def estatistica_filtrada_escanteios(self):
         try:
             conexao = conexao_bd.conectando()
@@ -181,4 +185,4 @@ class tratando_dados():
             cursor.close()
             conexao.close()
         except Exception as e:
-            print()
+            pass
