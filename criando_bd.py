@@ -12,7 +12,7 @@ class criando_banco_de_dados:
     # escanteios_teste='7.5'
 
     quantidade_gols = ['Over 1.5', 'Over 2.5', 'Over 3.5']
-    quantidade_escanteios =['10.5', '11.5', '12.5']
+    quantidade_escanteios = ['7.5', '8.5'] #['10.5', '11.5', '12.5']#
 
     list_pais = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
                 ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],
