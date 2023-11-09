@@ -26,7 +26,7 @@ class Escanteios:
         options.add_argument('window-size=800,1200')   
 
         navegador = webdriver.Chrome(options=options)
-        wait = WebDriverWait(navegador, 20)
+        wait = WebDriverWait(navegador, 10)
         navegador.get('https://www.adamchoi.co.uk/corners/detailed')
 
         button_league = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))

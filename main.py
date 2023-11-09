@@ -95,8 +95,8 @@ while True:
             break
             
         case '3':
-            criando_banco_de_dados_gols_obj = criando_banco_de_dados()
-            criando_banco_de_dados_gols_obj.criando_banco_de_dados_gols()
+            # criando_banco_de_dados_gols_obj = criando_banco_de_dados()
+            # criando_banco_de_dados_gols_obj.criando_banco_de_dados_gols()
             criando_banco_de_dados_escanteios_obj = criando_banco_de_dados()
             criando_banco_de_dados_escanteios_obj.criando_banco_de_dados_escanteios()
             break

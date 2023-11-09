@@ -7,14 +7,14 @@ from dotenv import load_dotenv
 import os
 from enviar_mensagem_telegram import enviar_mensagem
 
-list_pais_id =[['Brazil', 'Serie A', 71],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848]]
+#[['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848],]
 
-# list_pais_id = [['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848],['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
-#                 ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  
-#                 ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62], 
-#                 ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89], ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
-#                 ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Australia', 'A-League', 188],['Austria', 'Bundesliga', 218],
-#                 ['Sweden', 'Allsvenskan', 113], ['Switzerland', 'Super League', 207],  ['Mexico', 'Liga MX', 262], ['Poland', 'Ekstraklasa', 106],['Argentina','Primera Division', 128]]
+list_pais_id = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
+                ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  
+                ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62], 
+                ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89], ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
+                ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Australia', 'A-League', 188],['Austria', 'Bundesliga', 218],
+                ['Sweden', 'Allsvenskan', 113], ['Switzerland', 'Super League', 207],  ['Mexico', 'Liga MX', 262], ['Poland', 'Ekstraklasa', 106],['Argentina','Primera Division', 128]]
 
 data_atual = datetime.now()
 data_posterior = data_atual + timedelta(days=1)
@@ -64,5 +64,6 @@ def busca_jogos_dia_posterior():
 if __name__=="__main__":
     asyncio.run(enviar_mensagem(mensagem_jogos_posterior))
     busca_jogos_dia_posterior()
-b=1    
+
+a=1  
 
