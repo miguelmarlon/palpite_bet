@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import mysql.connector
-from criando_conexao_bd import conexao_bd
+from conectando_bd import conexao_bd
 
 class Gols:
     def __init__(self, pais,  liga, quantidade_gols):
@@ -83,7 +83,6 @@ class Gols:
         
         for linha in my_list:
             nome_time, total, casa, fora = linha 
-            #query = f'INSERT INTO gols (tipo, nome, total, casa, fora) VALUES ("{self.quantidade_gols.replace('Over ','')}", "{nome_time}", "{total}", "{casa}", "{fora}")'
             query = 'INSERT INTO gols (tipo, nome, total, casa, fora, pais, liga) VALUES (%s, %s, %s, %s, %s, %s, %s)'
             values = (self.quantidade_gols.replace('Over ',''), nome_time, total, casa, fora, self.pais, self.liga)
             try:
@@ -104,7 +103,7 @@ class Gols:
         options.add_argument("--lang=en-US")  
         options.add_argument("--country-code=US")  
         driver = webdriver.Chrome(options=options)
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 30)
         driver.get('https://www.adamchoi.co.uk/overs/detailed')
                 
         my_list=[] 
@@ -113,11 +112,11 @@ class Gols:
         button_pais = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
         select = Select(button_pais)
         select.select_by_visible_text(self.pais)
-                
+        sleep(2)        
         button_liga = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(button_liga)
         select.select_by_visible_text(self.liga)
-        
+        sleep(2)
         button_over = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]'))).click()
         sleep(2)
 

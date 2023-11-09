@@ -1,7 +1,7 @@
 from tratando_dados import tratando_dados
 from dotenv import load_dotenv
 import os
-from criando_conexao_bd import conexao_bd
+from conectando_bd import conexao_bd
 from criando_bd import criando_banco_de_dados
 
 def buscar_time_por_nome(cursor, nome_time):

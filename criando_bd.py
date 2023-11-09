@@ -1,7 +1,7 @@
 
 from scraping_escanteios import Escanteios
 from scraping_gols_marcados_sofridos import Gols
-from criando_conexao_bd import conexao_bd
+from conectando_bd import conexao_bd
 import mysql.connector
 
 class criando_banco_de_dados:
@@ -12,7 +12,7 @@ class criando_banco_de_dados:
     # escanteios_teste='7.5'
 
     quantidade_gols = ['Over 1.5', 'Over 2.5', 'Over 3.5']
-    quantidade_escanteios = ['7.5', '8.5'] #['10.5', '11.5', '12.5']#
+    quantidade_escanteios = ['7.5', '8.5', '10.5', '11.5', '12.5']
 
     list_pais = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
                 ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],
@@ -107,3 +107,5 @@ class criando_banco_de_dados:
             # Fechar o cursor e a conexão
             cursor.close()
             conexao.close()
+    
+
