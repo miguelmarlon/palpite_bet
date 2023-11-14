@@ -1,11 +1,11 @@
 
-from scraping_escanteios import Escanteios
+from scraping_corners import Corners
 from scraping_goals_scored_conceded import Goals
 import mysql.connector
 from dotenv import load_dotenv
 import os
 
-class database_connection:
+class DatabaseConnection:
     
     @staticmethod
     def connect():
@@ -18,14 +18,9 @@ class database_connection:
         )
         return connection
 
-class criando_banco_de_dados:
+class Create_database:
     
-    # pesquisa_gols= 'Over 1.5'
-    # pais_teste ='Italy'
-    # liga_teste= 'Serie A'
-    # escanteios_teste='7.5'
-
-    quantidade_gols = ['Over 1.5', 'Over 2.5', 'Over 3.5']
+    goal_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5']
     quantidade_escanteios = ['7.5', '8.5', '10.5', '11.5', '12.5']
 
     list_pais = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
@@ -46,69 +41,66 @@ class criando_banco_de_dados:
                             ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]                   
 
 
-    #criando bando de dados de gols
-    def criando_banco_de_dados_gols(self):
-        for gol in self.quantidade_gols:
-            for pais, liga in self.list_pais:
-                gols = Goals(pais, liga, gol)
-                dados = gols.create_goals_database()
-                print (dados)
-
-
-    # criando estatísticas de escanteios no DB
-    def criando_banco_de_dados_escanteios(self):
-        for escanteio in self.quantidade_escanteios:
-            for pais, liga in self.list_pais_escanteios:
-                escanteios = Escanteios(pais, liga, escanteio)
-                dados = escanteios.cria_bd_escanteios()
-                print (dados)
-
-    #atualizando bando de dados de gols
-    def atualizando_banco_de_dados_gols(self):
-        for gol in self.quantidade_gols:
-            for pais, liga in self.list_pais:
-                gols = Goals(pais, liga, gol)
-                dados = gols.atualiza_bd_gols()
-                print (dados)
     
-    def atualizando_banco_de_dados_escanteios(self):
-        for escanteio in self.quantidade_escanteios:
-            for pais, liga in self.list_pais_escanteios:
-                escanteios = Escanteios(pais, liga, escanteios)
-                dados = escanteios.atualiza_bd_escanteios()
-                print (dados)
+    def create_goals_database(self):
+        for goals_quantity in self.goal_quantities:
+            for country, league in self.country_list:
+                goals_instance = Goals(country, league, goals_quantity)
+                data = goals_instance.create_goals_database()
+                print(data)
     
-    def excluindo_linhas_duplicadas_no_banco_de_dados(self):
-        connection = database_connection.connect()
+    def create_corners_database(self):
+        for corner_quantity in self.corner_quantities:
+            for country, league in self.country_list_corners:
+                corners_instance = Corners(country, league, corner_quantity)
+                data = corners_instance.create_corners_database()
+                print(data)
+
+    def update_goals_database(self):
+        for goals_quantity in self.goal_quantities:
+            for country, league in self.country_list:
+                goals_instance = Goals(country, league, goals_quantity)
+                data = goals_instance.update_goals_database()
+                print(data)
+    
+    def update_corners_database(self):
+        for corner_quantity in self.corner_quantities:
+            for country, league in self.country_list_corners:
+                corners_instance = Corners(country, league, corner_quantity)
+                data = corners_instance.update_corners_database()
+                print(data)
+    
+    def remove_duplicate_rows_from_database(self):
+        connection = DatabaseConnection.connect()
         cursor = connection.cursor()
 
         try:            
-            consulta_criar_temporaria_tabela_gols = """
+            create_temporary_goals_table_query = """
             CREATE TABLE gols_temp AS
             SELECT DISTINCT id, tipo, nome, total, casa, fora
             FROM gols
             """
-            cursor.execute(consulta_criar_temporaria_tabela_gols)
-            consulta_excluir_original = "DROP TABLE gols"
-            cursor.execute(consulta_excluir_original)
+            cursor.execute(create_temporary_goals_table_query)
+            drop_original_goals_table_query = "DROP TABLE gols"
+            cursor.execute(drop_original_goals_table_query)
             
-            consulta_renomear = "RENAME TABLE gols_temp TO gols"
-            cursor.execute(consulta_renomear)
+            rename_goals_table_query = "RENAME TABLE gols_temp TO gols"
+            cursor.execute(rename_goals_table_query)
 
             connection.commit()
-            print("Linhas duplicadas da tabela gols excluídas com sucesso!")
+            print("Duplicate rows from 'goals' table successfully removed!")
             
-            consulta_criar_temporaria_tabela_escanteios = """
+            create_temporary_corners_table_query  = """
             CREATE TABLE escanteios_temp AS
             SELECT DISTINCT id, tipo, nome, total, casa, fora
             FROM escanteios
             """
-            cursor.execute(consulta_criar_temporaria_tabela_escanteios)
-            consulta_excluir_original = "DROP TABLE escanteios"
-            cursor.execute(consulta_excluir_original)
+            cursor.execute(create_temporary_corners_table_query )
+            drop_original_corners_table_query = "DROP TABLE escanteios"
+            cursor.execute(drop_original_corners_table_query)
             
-            consulta_renomear = "RENAME TABLE escanteios_temp TO escanteios"
-            cursor.execute(consulta_renomear)
+            rename_corners_table_query = "RENAME TABLE escanteios_temp TO escanteios"
+            cursor.execute(rename_corners_table_query)
 
             connection.commit()
             print("Linhas duplicadas da tabela escanteios excluídas com sucesso!")
@@ -118,7 +110,6 @@ class criando_banco_de_dados:
             print(f"Erro ao excluir linhas duplicadas: {e}")
 
         finally:
-            # Fechar o cursor e a conexão
             cursor.close()
             connection.close()
     

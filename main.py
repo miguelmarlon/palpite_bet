@@ -1,15 +1,15 @@
-from tratando_dados import tratando_dados
+from data_processor import DataProcessor
 from dotenv import load_dotenv
 import os
-from create_database import database_connection
-from criando_bd import criando_banco_de_dados
+from create_database import DatabaseConnection
+from create_database import Create_database
 
 def search_team_by_name(cursor, team_name):
         consulta_time = "SELECT * FROM gols WHERE nome LIKE %s"
         cursor.execute(consulta_time, (f'%{team_name}%',))
         return cursor.fetchall()
     
-conexao = database_connection.connect()
+conexao = DatabaseConnection.connect()
 cursor = conexao.cursor()
 load_dotenv()
 teams_list= []
@@ -82,31 +82,31 @@ while True:
                     break
                 
             for time_casa, time_fora in teams_list:    
-                tratando_dados_objeto = tratando_dados(time_casa, time_fora)       
-                df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
-                df_escanteios = tratando_dados_objeto.estatistica_filtrada_escanteios()
+                tratando_dados_objeto = DataProcessor(time_casa, time_fora)       
+                df_gols = tratando_dados_objeto.filtered_goal_statistics()
+                df_escanteios = tratando_dados_objeto.filtered_corners_statistics()
             exit()     
             
         case '2':
-            criando_banco_de_dados_gols_obj = criando_banco_de_dados()
-            criando_banco_de_dados_gols_obj.atualizando_banco_de_dados_gols()
-            criando_banco_de_dados_escanteios_obj = criando_banco_de_dados()
-            criando_banco_de_dados_escanteios_obj.atualizando_banco_de_dados_escanteios()
+            criando_banco_de_dados_gols_obj = Create_database()
+            criando_banco_de_dados_gols_obj.update_goals_database()
+            criando_banco_de_dados_escanteios_obj = Create_database()
+            criando_banco_de_dados_escanteios_obj.update_corners_database()
             break
             
         case '3':
-            criando_banco_de_dados_gols_obj = criando_banco_de_dados()
-            criando_banco_de_dados_gols_obj.criando_banco_de_dados_gols()
-            criando_banco_de_dados_escanteios_obj = criando_banco_de_dados()
-            criando_banco_de_dados_escanteios_obj.criando_banco_de_dados_escanteios()
+            criando_banco_de_dados_gols_obj = Create_database()
+            criando_banco_de_dados_gols_obj.create_goals_database()
+            criando_banco_de_dados_escanteios_obj = Create_database()
+            criando_banco_de_dados_escanteios_obj.create_corners_database()
             break
         
         case '4':
-            criando_banco_de_dados_obj = criando_banco_de_dados()
-            criando_banco_de_dados_obj.excluindo_linhas_duplicadas_no_banco_de_dados()
+            criando_banco_de_dados_obj = Create_database()
+            criando_banco_de_dados_obj.remove_duplicate_rows_from_database()
             
             break
                 
         case _:
-            print('OPÇÃO INVÁLIDA!')
+            print('INVALID OPTION!')
 

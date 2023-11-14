@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import mysql.connector
-from create_database import database_connection
+from create_database import DatabaseConnection
 
 class Goals:
     def __init__(self, country, league, goal_quantity):
@@ -78,7 +78,7 @@ class Goals:
             
             my_list.append(statistics_list)
           
-        connection = database_connection.connect()
+        connection = DatabaseConnection.connect()
         cursor = connection.cursor()
         
         for line in my_list:
@@ -157,7 +157,7 @@ class Goals:
             
             my_list.append(statistics_list)
             
-        connection = database_connection.connect()
+        connection = DatabaseConnection.connect()
         cursor = connection.cursor()
            
         for linha in my_list:
