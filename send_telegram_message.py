@@ -1,10 +1,8 @@
-import asyncio
 from dotenv import load_dotenv
 import os
 import telegram
 
-
-async def enviar_mensagem(mensagem):
+async def send_message(mensagem):
     load_dotenv()
     bot_token = os.getenv('bot_token')
     chat_id = os.getenv('chat_id')

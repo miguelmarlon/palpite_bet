@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from conectando_bd import conexao_bd
+from create_database import database_connection
 import mysql.connector
 
 class Escanteios:
@@ -99,7 +99,7 @@ class Escanteios:
             
             my_list.append(lista_times)
         
-        conexao = conexao_bd.conectando()
+        conexao = database_connection.connect()
         cursor = conexao.cursor()
         
         for linha in my_list:
@@ -195,7 +195,7 @@ class Escanteios:
             
             my_list.append(lista_times)
         
-        conexao = conexao_bd.conectando()
+        conexao = database_connection.connect()
         cursor = conexao.cursor()
         
         for linha in my_list:

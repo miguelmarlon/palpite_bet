@@ -1,87 +1,87 @@
 from tratando_dados import tratando_dados
 from dotenv import load_dotenv
 import os
-from conectando_bd import conexao_bd
+from create_database import database_connection
 from criando_bd import criando_banco_de_dados
 
-def buscar_time_por_nome(cursor, nome_time):
+def search_team_by_name(cursor, team_name):
         consulta_time = "SELECT * FROM gols WHERE nome LIKE %s"
-        cursor.execute(consulta_time, (f'%{nome_time}%',))
+        cursor.execute(consulta_time, (f'%{team_name}%',))
         return cursor.fetchall()
     
-conexao = conexao_bd.conectando()
+conexao = database_connection.connect()
 cursor = conexao.cursor()
 load_dotenv()
-lista_times= []
+teams_list= []
 
 print()
-print('******************BEM VINDO AO PROGRAMA!******************')
+print('******************WELCOME TO THE PROGRAM!******************')
 print()
 
 while True:
-    opcao = input('0 - SAIR\n\n'
-                '1 - ENTRAR NA SELEÇÃO DE TIMES\n\n'
-                '2 - ATUALIZAR O BANCO DE DADOS\n\n'
-                '3 - CRIAR O BANCO DE DADOS\n\n'
-                '4 - EXLCUIR LINHAS DUPLICADAS NO BANCO DE DADOS\n\n'
-                'OPÇÃO : ')
-    match opcao:
+    option = input('0 - EXIT\n\n'
+                   '1 - ENTER TEAM SELECTION\n\n'
+                   '2 - UPDATE DATABASE\n\n'
+                   '3 - CREATE DATABASE\n\n'
+                   '4 - DELETE DUPLICATE LINES IN THE DATABASE\n\n'
+                   'OPTION: ')
+    match option:
         case '0':
-            print('SAINDO DO PROGRAMA...')
+            print('EXITING THE PROGRAM...')
             exit()
         case '1':
             
             while True:
-                time_casa = input('DIGITE O NOME DO TIME DA CASA:')
-                resultado_casa = buscar_time_por_nome(cursor, time_casa)
+                home_team = input('ENTER THE NAME OF THE HOME TEAM:')
+                result_home = search_team_by_name(cursor, home_team)
 
-                if resultado_casa:
-                    nomes_time_casa = set(row[2] for row in resultado_casa)
+                if result_home:
+                    home_team_names = set(row[2] for row in result_home)
 
-                    if len(nomes_time_casa) == 1:
-                        time_casa = resultado_casa[0][2]
+                    if len(home_team_names) == 1:
+                        home_team = result_home[0][2]
                     else:
-                        print("Vários times correspondentes foram encontrados. Escolha um:")
-                        for i, nome in enumerate(nomes_time_casa):
-                            print(f"{i + 1}. {nome}")
+                        print("Multiple matching teams found. Choose one:")
+                        for i, name in enumerate(home_team_names):
+                            print(f"{i + 1}. {name}")
 
-                        escolha = int(input("Digite o número do time desejado: "))
-                        nomes_time_casa = list(nomes_time_casa)
-                        time_casa = nomes_time_casa[escolha - 1]
-                        print(f"O nome do time escolhido é: {time_casa}")
+                        choice = int(input("Enter the number of the desired team: "))
+                        home_team_names = list(home_team_names)
+                        home_team = home_team_names[choice - 1]
+                        print(f"The chosen team name is: {home_team}")
 
-                    time_fora = input('DIGITE O NOME DO TIME VISITANTE:')
-                    resultado_fora = buscar_time_por_nome(cursor, time_fora)
+                    away_team = input('ENTER THE NAME OF THE AWAY TEAM:')
+                    result_away = search_team_by_name(cursor, away_team)
 
-                    if resultado_fora:
-                        nomes_time_fora = set(row[2] for row in resultado_fora)
+                    if result_away:
+                        away_team_names = set(row[2] for row in result_away)
 
-                        if len(nomes_time_fora) == 1:
-                            time_fora = resultado_fora[0][2]
+                        if len(away_team_names) == 1:
+                            away_team = result_away[0][2]
                         else:
-                            print("Vários times correspondentes foram encontrados. Escolha um:")
-                            for i, nome in enumerate(nomes_time_fora):
-                                print(f"{i + 1}. {nome}")
+                            print("Multiple matching teams found. Choose one:")
+                            for i, name in enumerate(away_team_names):
+                                print(f"{i + 1}. {name}")
 
-                            escolha = int(input("Digite o número do time desejado: "))
-                            nomes_time_fora = list(nomes_time_fora)
-                            time_fora = nomes_time_fora[escolha - 1]
-                            print(f"O nome do time escolhido é: {time_fora}")
+                            choice = int(input("Enter the number of the desired team: "))
+                            away_team_names = list(away_team_names)
+                            away_team = away_team_names[choice - 1]
+                            print(f"The chosen team name is: {away_team}")
 
-                        lista_temporaria = [time_casa, time_fora]
-                        lista_times.append(lista_temporaria)
+                        temporary_list = [home_team, away_team]
+                        teams_list.append(temporary_list)
                     else:
-                        print(f'O TIME {time_fora} NÃO FOI ENCONTRADO!')
+                        print(f'THE TEAM {away_team} WAS NOT FOUND!')
                 else:
-                    print(f'O TIME {time_casa} NÃO FOI ENCONTRADO!')
+                    print(f'THE TEAM {home_team} WAS NOT FOUND!')
                     
-                continuar = input('DIGITE ENTER PARA CONTINUAR OU 2 PARA SAIR:')
-                if continuar == '2':
-                    print('AGUARDE UM INSTANTE PARA FINALIZAR:)')
+                continue_input = input('PRESS ENTER TO CONTINUE OR 2 TO EXIT:')
+                if continue_input == '2':
+                    print('WAIT A MOMENT TO FINISH :)')
                     print()
                     break
                 
-            for time_casa, time_fora in lista_times:    
+            for time_casa, time_fora in teams_list:    
                 tratando_dados_objeto = tratando_dados(time_casa, time_fora)       
                 df_gols = tratando_dados_objeto.estatistica_filtrada_gol()
                 df_escanteios = tratando_dados_objeto.estatistica_filtrada_escanteios()

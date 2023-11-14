@@ -3,8 +3,8 @@ import telegram
 import asyncio
 from dotenv import load_dotenv
 import os
-from conectando_bd import conexao_bd
-from enviar_mensagem_telegram import enviar_mensagem
+from create_database import database_connection
+from send_telegram_message import send_message
 
 class tratando_dados():
     
@@ -18,7 +18,7 @@ class tratando_dados():
                
     def estatistica_gol(self):
         
-        conexao = conexao_bd.conectando()
+        conexao = database_connection.connect()
         cursor = conexao.cursor()
         consulta_time_casa = "SELECT * FROM gols WHERE nome LIKE %s"
         cursor.execute(consulta_time_casa, (f'%{self.time_casa}%',))
@@ -45,7 +45,7 @@ class tratando_dados():
         
     def estatistica_escanteios(self):
        
-        conexao = conexao_bd.conectando()       
+        conexao = database_connection.connect()      
         cursor = conexao.cursor()
         consulta_time_casa = "SELECT * FROM escanteios WHERE nome LIKE %s"
         cursor.execute(consulta_time_casa, (f'%{self.time_casa}%',))
@@ -70,7 +70,7 @@ class tratando_dados():
         conexao.close()
     
     def estatistica_filtrada_gol(self):
-        conexao = conexao_bd.conectando()      
+        conexao = database_connection.connect()      
         cursor = conexao.cursor()
         consulta_time_casa = "SELECT * FROM gols WHERE nome LIKE %s"
         cursor.execute(consulta_time_casa, (f'%{self.time_casa.lower()}%',))
@@ -117,14 +117,14 @@ class tratando_dados():
         mensagem += mensagem_gols_abaixo
         
         if mensagem:
-            asyncio.run(enviar_mensagem(mensagem)) 
+            asyncio.run(send_message(mensagem)) 
                     
         cursor.close()
         conexao.close()
    
     def estatistica_filtrada_escanteios(self):
         
-        conexao = conexao_bd.conectando()
+        conexao = database_connection.connect()
         cursor = conexao.cursor()
         consulta_time_casa = f"SELECT * FROM escanteios WHERE nome = '{self.time_casa}'"
         cursor.execute(consulta_time_casa)
@@ -170,7 +170,7 @@ class tratando_dados():
         mensagem += mensagem_escanteios_abaixo
         
         if mensagem:
-            asyncio.run(enviar_mensagem(mensagem))
+            asyncio.run(send_message(mensagem))
                         
         cursor.close()
         conexao.close()

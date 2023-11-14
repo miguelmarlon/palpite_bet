@@ -1,8 +1,22 @@
 
 from scraping_escanteios import Escanteios
-from scraping_gols_marcados_sofridos import Gols
-from conectando_bd import conexao_bd
+from scraping_goals_scored_conceded import Goals
 import mysql.connector
+from dotenv import load_dotenv
+import os
+
+class database_connection:
+    
+    @staticmethod
+    def connect():
+        load_dotenv()
+        connection = mysql.connector.connect(
+            host=os.getenv('host'),
+            user=os.getenv('user'),
+            password=os.getenv('password'),
+            database=os.getenv('database'),
+        )
+        return connection
 
 class criando_banco_de_dados:
     
@@ -36,8 +50,8 @@ class criando_banco_de_dados:
     def criando_banco_de_dados_gols(self):
         for gol in self.quantidade_gols:
             for pais, liga in self.list_pais:
-                gols = Gols(pais, liga, gol)
-                dados = gols.cria_bd_gols()
+                gols = Goals(pais, liga, gol)
+                dados = gols.create_goals_database()
                 print (dados)
 
 
@@ -53,7 +67,7 @@ class criando_banco_de_dados:
     def atualizando_banco_de_dados_gols(self):
         for gol in self.quantidade_gols:
             for pais, liga in self.list_pais:
-                gols = Gols(pais, liga, gol)
+                gols = Goals(pais, liga, gol)
                 dados = gols.atualiza_bd_gols()
                 print (dados)
     
@@ -65,8 +79,8 @@ class criando_banco_de_dados:
                 print (dados)
     
     def excluindo_linhas_duplicadas_no_banco_de_dados(self):
-        conexao = conexao_bd.conectando()
-        cursor = conexao.cursor()
+        connection = database_connection.connect()
+        cursor = connection.cursor()
 
         try:            
             consulta_criar_temporaria_tabela_gols = """
@@ -81,7 +95,7 @@ class criando_banco_de_dados:
             consulta_renomear = "RENAME TABLE gols_temp TO gols"
             cursor.execute(consulta_renomear)
 
-            conexao.commit()
+            connection.commit()
             print("Linhas duplicadas da tabela gols excluídas com sucesso!")
             
             consulta_criar_temporaria_tabela_escanteios = """
@@ -96,16 +110,16 @@ class criando_banco_de_dados:
             consulta_renomear = "RENAME TABLE escanteios_temp TO escanteios"
             cursor.execute(consulta_renomear)
 
-            conexao.commit()
+            connection.commit()
             print("Linhas duplicadas da tabela escanteios excluídas com sucesso!")
 
         except mysql.connector.Error as e:
-            conexao.rollback()
+            connection.rollback()
             print(f"Erro ao excluir linhas duplicadas: {e}")
 
         finally:
             # Fechar o cursor e a conexão
             cursor.close()
-            conexao.close()
+            connection.close()
     
 
