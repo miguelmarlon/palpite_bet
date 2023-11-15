@@ -1,5 +1,5 @@
 from scraping_corners import Corners
-from scraping_goals_scored_conceded import Goals
+from scraping_team_goals_total import Goals
 import mysql.connector
 from dotenv import load_dotenv
 import os

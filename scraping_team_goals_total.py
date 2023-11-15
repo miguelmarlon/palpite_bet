@@ -32,13 +32,13 @@ class Goals:
         
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
         select = Select(country_button)
-        select.select_by_visible_text(self.pais)
+        select.select_by_visible_text(self.country)
                 
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(league_button)
-        select.select_by_visible_text(self.liga)
+        select.select_by_visible_text(self.league)
         
-        over_button = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]'))).click()
+        over_button = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.goal_quantity}"])[1]'))).click()
         sleep(2)
         
         page_content = driver.page_source
@@ -50,7 +50,7 @@ class Goals:
             team_name_element = team.find('div', attrs={'class':'col-lg-3 col-sm-6 col-xs-12 ng-binding'})
             
             if teams_section:
-                match_5 = re.search(r'^(.+?)\s(?=Overall)', team_name.text)
+                match_5 = re.search(r'^(.+?)\s(?=Overall)', team_name_element.text)
                 if match_5:
                     team_name = match_5.group(1).strip() 
                 else:
@@ -67,7 +67,7 @@ class Goals:
             home_goals = goals_home.find('div', attrs= {'class':'progress-bar progress-bar-success ng-binding'}).text.replace('%', '')
             
             goals_away = goals_home_away[1]
-            away_goals = goals_away.find.find('div', attrs= {'class':'progress-bar progress-bar-success ng-binding'}).text.replace('%', '')
+            away_goals = goals_away.find('div', attrs= {'class':'progress-bar progress-bar-success ng-binding'}).text.replace('%', '')
             
             statistics_list = [
                 team_name,
