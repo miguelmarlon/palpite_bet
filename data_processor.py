@@ -95,21 +95,21 @@ class DataProcessor:
         message_goals_below = ''
         
         if not df_filtered_goals_above.empty:
-            message_goals_above = f"Chances for {self.home_team} vs {self.away_team} ⚽:\n\n"
+            message_goals_above = f"⚽Oportunidade para {self.home_team} vs {self.away_team} ⚽:\n\n"
             goals_above_added = set()
             for index, row in df_filtered_goals_above.iterrows():
                 goals = row['goals']
                 home_vs_away = row['home_vs_away']                                  
-                message_goals_above += f"Goals above {goals}: {home_vs_away}% 🎯\n"
+                message_goals_above += f"Gols acima de {goals}: {home_vs_away}% 🎯\n"
                 goals_above_added.add(goals)
             
         if not df_filtered_goals_below.empty:
-            message_goals_below = f"Chances for {self.home_team} vs {self.away_team} ⚽:\n\n"
+            message_goals_below = f"⚽Oportunidade para {self.home_team} vs {self.away_team} ⚽:\n\n"
             goals_below_added = set()
             for index, row in df_filtered_goals_below.iterrows():
                 goals = row['goals']
                 home_vs_away = 100 - row['home_vs_away']                               
-                message_goals_below += f"Goals below {goals}: {home_vs_away}% 🎯\n"  
+                message_goals_below += f"Gols abaixo de {goals}: {home_vs_away}% 🎯\n"  
                 goals_below_added.add(goals) 
             
         message += message_goals_above
@@ -151,18 +151,18 @@ class DataProcessor:
         message_corners_below = ''
 
         if not df_filtered_corners_above.empty:
-            message_corners_above = f"Chances for {self.home_team} vs {self.away_team} ⚽:\n\n"
+            message_corners_above = f"⚽Oportunidades para {self.home_team} vs {self.away_team} ⚽:\n\n"
             for index, row in df_filtered_corners_above.iterrows():
                 corners = row['corners']
                 home_vs_away = row['home_vs_away']
-                message_corners_above += f"Corners {corners}: {home_vs_away}% 🎌\n"
+                message_corners_above += f"Escanteios acima de {corners}: {home_vs_away}% 🎌\n"
 
         if not df_filtered_corners_below.empty:
-            message_corners_below = f"Chances for {self.home_team} vs {self.away_team} ⚽:\n\n"
+            message_corners_below = f"⚽Oportunidades para {self.home_team} vs {self.away_team} ⚽:\n\n"
             for index, row in df_filtered_corners_below.iterrows():
                 corners = row['corners']
                 home_vs_away = 100 - row['home_vs_away']
-                message_corners_below += f"Corners below {corners}: {home_vs_away}% 🎌\n"
+                message_corners_below += f"Escanteios abaixo de {corners}: {home_vs_away}% 🎌\n"
 
         message += message_corners_above
         message += message_corners_below

@@ -89,8 +89,8 @@ while True:
             exit()     
             
         case '2':
-            # criando_banco_de_dados_gols_obj = CreateDatabase()
-            # criando_banco_de_dados_gols_obj.update_goals_database()
+            criando_banco_de_dados_gols_obj = CreateDatabase()
+            criando_banco_de_dados_gols_obj.update_goals_database()
             criando_banco_de_dados_escanteios_obj = CreateDatabase()
             criando_banco_de_dados_escanteios_obj.update_corners_database()
             break
@@ -110,5 +110,3 @@ while True:
                 
         case _:
             print('INVALID OPTION!')
-
-a=1
