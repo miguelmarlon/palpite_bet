@@ -1,29 +1,16 @@
-
 from scraping_corners import Corners
 from scraping_goals_scored_conceded import Goals
 import mysql.connector
 from dotenv import load_dotenv
 import os
-
-class DatabaseConnection:
-    
-    @staticmethod
-    def connect():
-        load_dotenv()
-        connection = mysql.connector.connect(
-            host=os.getenv('host'),
-            user=os.getenv('user'),
-            password=os.getenv('password'),
-            database=os.getenv('database'),
-        )
-        return connection
-
-class Create_database:
+from database_connection import DatabaseConnection
+  
+class CreateDatabase:
     
     goal_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5']
-    quantidade_escanteios = ['7.5', '8.5', '10.5', '11.5', '12.5']
+    corner_quantities = ['7.5', '8.5', '10.5', '11.5', '12.5']
 
-    list_pais = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
+    country_list = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
                 ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],
                 ['Scotland','SPL'], ['Scotland','Scottish Championship'], ['Netherlands', 'Eredivisie'], ['Netherlands', 'Eerste Divisie'], 
                 ['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'], ['Belgium','First Division B'], ['Brazil','Serie A'],['Brazil','Serie B'],
@@ -33,14 +20,12 @@ class Create_database:
     
      
                 # ['Finland','Finnish Veikkausliiga'] não tem essa liga para corners 
-    list_pais_escanteios = [['Italy', 'Serie A'],['Italy', 'Serie B'],['England', 'Premier League'],['England', 'Championship'],['England', 'League One'],['England', 'League Two'],['England', 'National League'],['Spain', 'La Liga'],['Spain', 'Segunda Division'],
+    country_list_corners = [['Italy', 'Serie A'],['Italy', 'Serie B'],['England', 'Premier League'],['England', 'Championship'],['England', 'League One'],['England', 'League Two'],['England', 'National League'],['Spain', 'La Liga'],['Spain', 'Segunda Division'],
                             ['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],['Scotland','SPL'],['Scotland','Scottish Championship'],['Scotland','Scottish League 1'],['Scotland','Scottish League 2'],
                             ['Netherlands', 'Eredivisie'],['Netherlands', 'Eerste Divisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],
                             ['Brazil','Serie A'],['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],
                             ['USA','US MLS'],['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
                             ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]                   
-
-
     
     def create_goals_database(self):
         for goals_quantity in self.goal_quantities:

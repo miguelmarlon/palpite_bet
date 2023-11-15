@@ -8,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import mysql.connector
-from create_database import DatabaseConnection
+from database_connection import DatabaseConnection
 
 class Goals:
     def __init__(self, country, league, goal_quantity):
@@ -117,7 +117,7 @@ class Goals:
         select = Select(league_button)
         select.select_by_visible_text(self.league)
         sleep(2)
-        button_over = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.quantidade_gols}"])[1]'))).click()
+        button_over = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.goal_quantity}"])[1]'))).click()
         sleep(2)
 
         page_content = driver.page_source
@@ -161,10 +161,10 @@ class Goals:
         cursor = connection.cursor()
            
         for linha in my_list:
-            nome_time, total, casa, fora = linha 
-            query = "UPDATE gols SET total = %s, casa = %s, fora = %s WHERE tipo = %s AND nome = %s"
-            tipo= self.quantidade_gols.replace('Over ', '')
-            valores = (total, casa, fora, tipo, nome_time)
+            team_name, total, home, away = linha 
+            query = "UPDATE goals SET total = %s, home = %s, away = %s WHERE type = %s AND name = %s"
+            type= self.goal_quantity.replace('Over ', '')
+            valores = (total, home, away, type, team_name)
     
             try:
                 cursor.execute(query, valores)

@@ -3,7 +3,7 @@ import telegram
 import asyncio
 from dotenv import load_dotenv
 import os
-from create_database import DatabaseConnection
+from database_connection import DatabaseConnection
 from send_telegram_message import send_message
 
 class DataProcessor:

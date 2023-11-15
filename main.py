@@ -1,12 +1,13 @@
 from data_processor import DataProcessor
 from dotenv import load_dotenv
 import os
-from create_database import DatabaseConnection
-from create_database import Create_database
+from database_connection import DatabaseConnection
+from create_database import CreateDatabase
+
 
 def search_team_by_name(cursor, team_name):
-        consulta_time = "SELECT * FROM gols WHERE nome LIKE %s"
-        cursor.execute(consulta_time, (f'%{team_name}%',))
+        team_query = "SELECT * FROM goals WHERE name LIKE %s"
+        cursor.execute(team_query, (f'%{team_name}%',))
         return cursor.fetchall()
     
 conexao = DatabaseConnection.connect()
@@ -88,21 +89,21 @@ while True:
             exit()     
             
         case '2':
-            criando_banco_de_dados_gols_obj = Create_database()
-            criando_banco_de_dados_gols_obj.update_goals_database()
-            criando_banco_de_dados_escanteios_obj = Create_database()
+            # criando_banco_de_dados_gols_obj = CreateDatabase()
+            # criando_banco_de_dados_gols_obj.update_goals_database()
+            criando_banco_de_dados_escanteios_obj = CreateDatabase()
             criando_banco_de_dados_escanteios_obj.update_corners_database()
             break
             
         case '3':
-            criando_banco_de_dados_gols_obj = Create_database()
+            criando_banco_de_dados_gols_obj = CreateDatabase()
             criando_banco_de_dados_gols_obj.create_goals_database()
-            criando_banco_de_dados_escanteios_obj = Create_database()
+            criando_banco_de_dados_escanteios_obj = CreateDatabase()
             criando_banco_de_dados_escanteios_obj.create_corners_database()
             break
         
         case '4':
-            criando_banco_de_dados_obj = Create_database()
+            criando_banco_de_dados_obj = CreateDatabase()
             criando_banco_de_dados_obj.remove_duplicate_rows_from_database()
             
             break
@@ -110,3 +111,4 @@ while True:
         case _:
             print('INVALID OPTION!')
 
+a=1
