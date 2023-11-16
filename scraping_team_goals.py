@@ -93,5 +93,5 @@ class TeamGoals:
         connection.close()
         
         print(my_list)
-        return my_list
+        
         
