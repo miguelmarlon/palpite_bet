@@ -7,19 +7,20 @@ from dotenv import load_dotenv
 import os
 from send_telegram_message import send_message
 
+
 list_country_id = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
-                ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  
-                ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
+                ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
+                ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],['France', 'Coupe de France', 66],
                 ['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848],['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89], 
                 ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
-                ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Australia', 'A-League', 188],['Austria', 'Bundesliga', 218],
-                ['Sweden', 'Allsvenskan', 113], ['Switzerland', 'Super League', 207],  ['Mexico', 'Liga MX', 262], ['Poland', 'Ekstraklasa', 106],['Argentina','Primera Division', 128]]
+                ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262]]
+#, ['Argentina','Primera Division', 128]
 
 current_date = datetime.now()
 next_date = current_date + timedelta(days=1)
 formatted_next_date_for_api_search = next_date.strftime("%Y-%m-%d")
 date_for_telegram_posting = next_date.strftime("%d-%m")
-message_for_next_day_games = f'🤑🤑⚽ GAMES DAY {date_for_telegram_posting} ⚽🤑🤑'
+message_for_next_day_games = f'🤑🤑⚽ PALPITES PARA O DIA {date_for_telegram_posting} ⚽🤑🤑'
 
 def search_next_day_games():
     url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
@@ -28,7 +29,7 @@ def search_next_day_games():
     RapidAPI = os.getenv('RapidAPI')
     
     for country_list in list_country_id:
-        query_params = {"date": "2023-11-17", "league": country_list[2], "season": "2023"}
+        query_params = {"date": formatted_next_date_for_api_search, "league": country_list[2], "season": "2023"}
         headers = {
             "X-RapidAPI-Key": RapidAPI,
             "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
