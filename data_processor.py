@@ -66,6 +66,44 @@ class DataProcessor:
         cursor.close()
         connection.close()
     
+    def additional_goals_statistics(self):
+                
+        connection = DatabaseConnection.connect()      
+        cursor = connection.cursor()
+
+        query_scored_home_team = "SELECT * FROM test_scored WHERE name LIKE %s AND type = %s"
+        cursor.execute(query_scored_home_team, (f'%{self.home_team.lower()}%',))
+        result_scored_home_team = cursor.fetchall()
+
+        query_scored_away_team = "SELECT * FROM test_scored WHERE name LIKE %s AND type = %s"
+        cursor.execute(query_scored_away_team, (f'%{self.away_team.lower()}%',))
+        result_scored_away_team = cursor.fetchall()
+        
+        query_conceded_home_team = "SELECT * FROM test_conceded WHERE name LIKE %s AND type = %s"
+        cursor.execute(query_conceded_home_team, (f'%{self.home_team.lower()}%',))
+        result_conceded_home_team = cursor.fetchall()
+
+        query_conceded_away_team = "SELECT * FROM test_conceded WHERE name LIKE %s AND type = %s"
+        cursor.execute(query_conceded_away_team, (f'%{self.away_team.lower()}%', ))
+        result_conceded_away_team = cursor.fetchall()
+        
+        df_scored_home_team = pd.DataFrame(result_scored_home_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
+        df_scored_away_team = pd.DataFrame(result_scored_away_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
+        
+        df_conceded_home_team = pd.DataFrame(result_conceded_home_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
+        df_conceded_away_team = pd.DataFrame(result_conceded_away_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
+        
+        message_home_team = f'{self.home_team} tem estatística de gols marcados como mandante:\n {df_scored_home_team['type'].to_string(index=False)}: {df_scored_home_team['home'].to_string(index=False)}%\n'
+        message_home_team += f'{self.home_team} tem estatística de gols sofridos como mandante:\n {df_conceded_home_team['type'].to_string(index=False)}: {df_conceded_home_team['home'].to_string(index=False)}%\n'
+        
+        message_away_team = f'{self.away_team} tem estatística de gols marcados como visitante:\n {df_scored_away_team['type'].to_string(index=False)}: {df_scored_home_team['home'].to_string(index=False)}%\n'
+        message_away_team += f'{self.away_team} tem estatística de gols sofridos como visitante:\n {df_conceded_away_team['type'].to_string(index=False)}: {df_conceded_home_team['away'].to_string(index=False)}%\n'
+        asyncio.run(send_message(message_home_team))
+        asyncio.run(send_message(message_away_team))
+              
+        cursor.close()
+        connection.close()
+    
     def filtered_goal_statistics(self):
         connection = DatabaseConnection.connect()      
         cursor = connection.cursor()
@@ -102,7 +140,7 @@ class DataProcessor:
                 home_vs_away = row['home_vs_away']                                  
                 message_goals_above += f"Gols acima de {goals}: {home_vs_away}% 🎯\n"
                 goals_above_added.add(goals)
-            
+                
         if not df_filtered_goals_below.empty:
             message_goals_below = f"⚽Oportunidade para {self.home_team} vs {self.away_team} ⚽:\n\n"
             goals_below_added = set()
@@ -117,7 +155,7 @@ class DataProcessor:
         
         if message:
             asyncio.run(send_message(message)) 
-            
+            self.additional_goals_statistics()
         cursor.close()
         connection.close()
    
@@ -172,40 +210,4 @@ class DataProcessor:
         cursor.close()
         connection.close()
     
-    def additional_goals_statistics(self):
-                
-        connection = DatabaseConnection.connect()      
-        cursor = connection.cursor()
-
-        query_scored_home_team = "SELECT * FROM test_scored WHERE name LIKE %s"
-        cursor.execute(query_scored_home_team, (f'%{self.home_team.lower()}%',))
-        result_scored_home_team = cursor.fetchall()
-
-        query_scored_away_team = "SELECT * FROM test_scored WHERE name LIKE %s"
-        cursor.execute(query_scored_away_team, (f'%{self.away_team.lower()}%',))
-        result_scored_away_team = cursor.fetchall()
-        
-        query_conceded_home_team = "SELECT * FROM test_conceded WHERE name LIKE %s"
-        cursor.execute(query_conceded_home_team, (f'%{self.home_team.lower()}%',))
-        result_conceded_home_team = cursor.fetchall()
-
-        query_conceded_away_team = "SELECT * FROM test_conceded WHERE name LIKE %s"
-        cursor.execute(query_conceded_away_team, (f'%{self.away_team.lower()}%',))
-        result_conceded_away_team = cursor.fetchall()
-        
-        df_scored_home_team = pd.DataFrame(result_scored_home_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
-        df_scored_away_team = pd.DataFrame(result_scored_away_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
-        
-        df_conceded_home_team = pd.DataFrame(result_conceded_home_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
-        df_conceded_away_team = pd.DataFrame(result_conceded_away_team, columns=['id', 'type', 'name', 'total', 'home', 'away', 'country', 'league'])
-        
-        message_home_team = f'{self.home_team} tem estatística de gols marcados como mandante:\n {df_scored_home_team['type'].to_string(index=False)}: {df_scored_home_team['home'].to_string(index=False)}%\n'
-        message_home_team += f'{self.home_team} tem estatística de gols sofridos como mandante:\n {df_conceded_home_team['type'].to_string(index=False)}: {df_conceded_home_team['home'].to_string(index=False)}%\n'
-        
-        message_away_team = f'{self.away_team} tem estatística de gols marcados como visitante:\n {df_scored_away_team['type'].to_string(index=False)}: {df_scored_home_team['home'].to_string(index=False)}%\n'
-        message_away_team += f'{self.away_team} tem estatística de gols sofridos como visitante:\n {df_conceded_away_team['type'].to_string(index=False)}: {df_conceded_home_team['away'].to_string(index=False)}%\n'
-        asyncio.run(send_message(message_home_team))
-        asyncio.run(send_message(message_away_team))
-              
-        cursor.close()
-        connection.close()
+    
