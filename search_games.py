@@ -5,7 +5,7 @@ from data_processor import DataProcessor
 import asyncio
 from dotenv import load_dotenv
 import os
-from send_telegram_message import send_message
+from send_telegram_message import *
 
 
 list_country_id = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
@@ -23,13 +23,14 @@ date_for_telegram_posting = next_date.strftime("%d-%m")
 message_for_next_day_games = f'🤑🤑⚽ PALPITES PARA O DIA {date_for_telegram_posting} ⚽🤑🤑'
 
 def search_next_day_games():
+    
     url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
     team_names = []
     final_team_list = []
     RapidAPI = os.getenv('RapidAPI')
     
     for country_list in list_country_id:
-        query_params = {"date": formatted_next_date_for_api_search, "league": country_list[2], "season": "2023"}
+        query_params = {"date": '2023-11-26', "league": country_list[2], "season": "2023"}
         headers = {
             "X-RapidAPI-Key": RapidAPI,
             "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
@@ -59,7 +60,7 @@ def search_next_day_games():
         data_processor_obj.filtered_corners_statistics()     
 
 if __name__ == "__main__":
-    asyncio.run(send_message(message_for_next_day_games))
+    asyncio.run(send_message_with_retry(message_for_next_day_games))
     search_next_day_games()
 
  
