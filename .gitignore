@@ -1,1 +1,16 @@
 .env
+conectando_bd.cpython-312.pyc
+create_database.cpython-312.pyc
+criando_bd.cpython-312.pyc
+criando_conexao_bd.cpython-312.pyc
+data_processor.cpython-312.pyc
+database_connection.cpython-312.pyc
+enviar_mensagem_telegram.cpython-312.pyc
+scraping_corners.cpython-312.pyc
+scraping_escanteios.cpython-312.pyc
+scraping_goals_scored_conceded.cpython-312.pyc
+scraping_gols_marcados_sofridos.cpython-312.pyc
+scraping_team_goals_total.cpython-312.pyc
+scraping_team_goals.cpython-312.pyc
+send_telegram_message.cpython-312.pyc
+tratando_dados.cpython-312.pyc

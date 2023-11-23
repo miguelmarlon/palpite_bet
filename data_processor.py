@@ -186,8 +186,7 @@ class DataProcessor:
         message = ''
         message_goals_above = ''
         message_goals_below = ''
-        
-        
+                
         if not df_filtered_goals_above.empty:
             message_goals_above = f"⚽Oportunidade para {self.home_team} vs {self.away_team} ⚽:\n\n"
             goals_above_added = set()

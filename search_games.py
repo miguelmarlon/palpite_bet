@@ -30,7 +30,7 @@ def search_next_day_games():
     RapidAPI = os.getenv('RapidAPI')
     
     for country_list in list_country_id:
-        query_params = {"date": '2023-11-26', "league": country_list[2], "season": "2023"}
+        query_params = {"date": formatted_next_date_for_api_search, "league": country_list[2], "season": "2023"}
         headers = {
             "X-RapidAPI-Key": RapidAPI,
             "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
@@ -52,16 +52,17 @@ def search_next_day_games():
             print(f"No games found for {country_list[0]} {country_list[1]}")  
         
         final_team_list.append([team_names])  
-    
+    print(team_names)
     for home_team, away_team in team_names:       
         
         data_processor_obj = DataProcessor(home_team, away_team)
         data_processor_obj.filtered_goal_statistics()
-        data_processor_obj.filtered_corners_statistics()     
+        data_processor_obj.filtered_corners_statistics()
 
 if __name__ == "__main__":
     asyncio.run(send_message_with_retry(message_for_next_day_games))
     search_next_day_games()
 
+a=1
  
 

@@ -4,10 +4,11 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 from database_connection import DatabaseConnection
+from scraping_team_goals import TeamGoals
   
 class CreateDatabase:
-    
-    goal_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5']
+    goal_team_goals_quantities = ['Over 0.5', 'Over 1.5', 'Over 2.5']
+    goal_total_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5']
     corner_quantities = ['7.5', '8.5', '10.5', '11.5', '12.5']
 
     country_list = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
@@ -27,8 +28,8 @@ class CreateDatabase:
                             ['USA','US MLS'],['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
                             ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]                   
     
-    def create_goals_database(self):
-        for goals_quantity in self.goal_quantities:
+    def create_goals_total_database(self):
+        for goals_quantity in self.goal_total_quantities:
             for country, league in self.country_list:
                 goals_instance = Goals(country, league, goals_quantity)
                 data = goals_instance.create_goals_database()
@@ -40,9 +41,23 @@ class CreateDatabase:
                 corners_instance = Corners(country, league, corner_quantity)
                 data = corners_instance.create_corners_database()
                 print(data)
+    
+    def create_goals_scored_database(self):
+        for goals_quantity in self.goal_team_goals_quantities:
+            for country, league in self.country_list:
+                team_goals_instance = TeamGoals(country, league, goals_quantity)
+                data = team_goals_instance.create_goals_scored_database()
+                print(data)
+    
+    def create_goals_conceded_database(self):
+        for goals_quantity in self.goal_team_goals_quantities:
+            for country, league in self.country_list:
+                team_goals_instance = TeamGoals(country, league, goals_quantity)
+                data = team_goals_instance.create_goals_conceded_database()
+                print(data)
 
     def update_goals_database(self):
-        for goals_quantity in self.goal_quantities:
+        for goals_quantity in self.goal_total_quantities:
             for country, league in self.country_list:
                 goals_instance = Goals(country, league, goals_quantity)
                 data = goals_instance.update_goals_database()
