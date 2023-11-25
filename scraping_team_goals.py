@@ -17,7 +17,7 @@ class TeamGoals:
         self.goal_quantity = goal_quantity
         
         
-    def create_goals_scored_database(self):
+    def create_goals_scored_table(self):
                 
         options= Options()
         options.add_argument('window-size=800,1200')
@@ -27,7 +27,7 @@ class TeamGoals:
         wait = WebDriverWait(driver, 10)
         driver.get('https://www.adamchoi.co.uk/teamgoals/detailed')
         sleep(2)        
-        my_list=[] 
+        my_list=[]
         statistics_list=[]
         
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
@@ -94,7 +94,7 @@ class TeamGoals:
         
         print(my_list)
         
-    def create_goals_conceded_database(self):
+    def create_goals_conceded_table(self):
                 
         options= Options()
         options.add_argument('window-size=800,1200')
@@ -117,7 +117,6 @@ class TeamGoals:
         
         over_button = wait.until(EC.visibility_of_element_located((By.XPATH, f"//label[@class='btn btn-sm btn-primary ng-pristine ng-untouched ng-valid ng-not-empty'][normalize-space()='{self.goal_quantity}']"))).click()
         sleep(2)
-
 
         page_content = driver.page_source
         site= BeautifulSoup(page_content, 'html.parser')

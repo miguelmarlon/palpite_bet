@@ -11,16 +11,16 @@ class CreateDatabase:
     goal_total_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5']
     corner_quantities = ['7.5', '8.5', '10.5', '11.5', '12.5']
 
+    #pegar as informações do banco de dados
     country_list = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
                 ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],
                 ['Scotland','SPL'], ['Scotland','Scottish Championship'], ['Netherlands', 'Eredivisie'], ['Netherlands', 'Eerste Divisie'], 
                 ['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'], ['Belgium','First Division B'], ['Brazil','Serie A'],['Brazil','Serie B'],
                 ['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],['USA','US MLS'],
                 ['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
-                ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League'],['Finland','Finnish Veikkausliiga']]
-    
-     
-                # ['Finland','Finnish Veikkausliiga'] não tem essa liga para corners 
+                ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]
+        
+                
     country_list_corners = [['Italy', 'Serie A'],['Italy', 'Serie B'],['England', 'Premier League'],['England', 'Championship'],['England', 'League One'],['England', 'League Two'],['England', 'National League'],['Spain', 'La Liga'],['Spain', 'Segunda Division'],
                             ['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],['Scotland','SPL'],['Scotland','Scottish Championship'],['Scotland','Scottish League 1'],['Scotland','Scottish League 2'],
                             ['Netherlands', 'Eredivisie'],['Netherlands', 'Eerste Divisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],
@@ -32,42 +32,42 @@ class CreateDatabase:
         for goals_quantity in self.goal_total_quantities:
             for country, league in self.country_list:
                 goals_instance = Goals(country, league, goals_quantity)
-                data = goals_instance.create_goals_database()
+                data = goals_instance.create_goals_table()
                 print(data)
     
     def create_corners_database(self):
         for corner_quantity in self.corner_quantities:
             for country, league in self.country_list_corners:
                 corners_instance = Corners(country, league, corner_quantity)
-                data = corners_instance.create_corners_database()
+                data = corners_instance.create_corners_table()
                 print(data)
     
     def create_goals_scored_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league in self.country_list:
                 team_goals_instance = TeamGoals(country, league, goals_quantity)
-                data = team_goals_instance.create_goals_scored_database()
+                data = team_goals_instance.create_goals_scored_table()
                 print(data)
     
     def create_goals_conceded_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league in self.country_list:
                 team_goals_instance = TeamGoals(country, league, goals_quantity)
-                data = team_goals_instance.create_goals_conceded_database()
+                data = team_goals_instance.create_goals_conceded_table()
                 print(data)
 
     def update_goals_database(self):
         for goals_quantity in self.goal_total_quantities:
             for country, league in self.country_list:
                 goals_instance = Goals(country, league, goals_quantity)
-                data = goals_instance.update_goals_database()
+                data = goals_instance.update_goals_table()
                 print(data)
     
     def update_corners_database(self):
         for corner_quantity in self.corner_quantities:
             for country, league in self.country_list_corners:
                 corners_instance = Corners(country, league, corner_quantity)
-                data = corners_instance.update_corners_database()
+                data = corners_instance.update_corners_table()
                 print(data)
     
     def remove_duplicate_rows_from_database(self):

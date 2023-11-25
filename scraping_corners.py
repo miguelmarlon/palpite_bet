@@ -17,7 +17,7 @@ class Corners:
         self.league = league
         self.corner_quantity = corner_quantity
 
-    def create_corners_database(self):
+    def create_corners_table(self):
 
         my_list = []
         team_list = []
@@ -113,7 +113,7 @@ class Corners:
 
         return my_list
     
-    def update_corners_database(self):
+    def update_corners_table(self):
 
         my_list = []
         team_list = []

@@ -17,7 +17,7 @@ class Goals:
         self.goal_quantity = goal_quantity
         
         
-    def create_goals_database(self):
+    def create_goals_table(self):
                 
         options= Options()
         options.add_argument('window-size=800,1200')
@@ -96,7 +96,7 @@ class Goals:
                
         return my_list
     
-    def update_goals_database(self):
+    def update_goals_table(self):
                 
         options= Options()
         options.add_argument('window-size=800,1200')
