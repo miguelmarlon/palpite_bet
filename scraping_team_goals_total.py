@@ -11,11 +11,11 @@ import mysql.connector
 from database_connection import DatabaseConnection
 
 class Goals:
-    def __init__(self, country, league, goal_quantity):
+    def __init__(self, country, league, goal_quantity, api_id):
         self.country = country
         self.league = league
         self.goal_quantity = goal_quantity
-        
+        self.api_id = api_id
         
     def create_goals_table(self):
                 
@@ -81,10 +81,19 @@ class Goals:
         connection = DatabaseConnection.connect()
         cursor = connection.cursor()
         
-        for line in my_list:
+        for line in my_list:                        
             team_name, total, home, away = line 
-            query = 'INSERT INTO goals (type, name, total, home, away, country, league) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-            values = (self.goal_quantity.replace('Over ',''), team_name, total, home, away, self.country, self.league)
+            ##preciso buscar league_id para completar a tabela
+            query = 'INSERT INTO team (name,api_id) VALUES (%s, %s)'
+            values = (team_name, self.api_id)
+            try:
+                cursor.execute(query, values)
+            except mysql.connector.Error as err:
+                print(f"MySQL Error: {err}")
+                connection.rollback()
+                        
+            query = 'INSERT INTO goals_scored_conceded (total, home, away) VALUES (%s, %s, %s)'
+            values = (total, home, away)
             try:
                 cursor.execute(query, values)
             except mysql.connector.Error as err:

@@ -12,61 +12,52 @@ class CreateDatabase:
     corner_quantities = ['7.5', '8.5', '10.5', '11.5', '12.5']
 
     #pegar as informações do banco de dados
-    country_list = [['Italy', 'Serie A'], ['Italy', 'Serie B'], ['England', 'Premier League'], ['England', 'Championship'], ['England', 'League One'], ['England', 'League Two'], 
-                ['England', 'National League'], ['Spain', 'La Liga'], ['Spain', 'Segunda Division'] ,['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],
-                ['Scotland','SPL'], ['Scotland','Scottish Championship'], ['Netherlands', 'Eredivisie'], ['Netherlands', 'Eerste Divisie'], 
-                ['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'], ['Belgium','First Division B'], ['Brazil','Serie A'],['Brazil','Serie B'],
-                ['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],['USA','US MLS'],
-                ['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
-                ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]
-        
-                
-    country_list_corners = [['Italy', 'Serie A'],['Italy', 'Serie B'],['England', 'Premier League'],['England', 'Championship'],['England', 'League One'],['England', 'League Two'],['England', 'National League'],['Spain', 'La Liga'],['Spain', 'Segunda Division'],
-                            ['Germany','Bundesliga'],['Germany','Bundesliga 2'],['France', 'Ligue 1'],['France', 'Ligue 2'],['Scotland','SPL'],['Scotland','Scottish Championship'],['Scotland','Scottish League 1'],['Scotland','Scottish League 2'],
-                            ['Netherlands', 'Eredivisie'],['Netherlands', 'Eerste Divisie'],['Portugal','Portugese Liga NOS'],['Turkey','Turkish Super Lig'],['Greece','Greek Super League'],['Belgium','Pro League'],
-                            ['Brazil','Serie A'],['Austria','Bundesliga'],['Russia','Premier League'],['Argentina','Primera Division'],['Denmark', 'Superliga'],['Poland','Ekstraklasa'],
-                            ['USA','US MLS'],['Norway','Norwegian Eliteserien'],['Sweden','Swedish Allsvenskan'],['Switzerland','Swiss Super League'],['Australia','A League'],['Japan','J League'],
-                            ['China','Super League'],['Mexico','Liga MX'],['Czechia','Czech Liga'],['Saudi Arabia','Saudi Pro League']]                   
-    
+    country_list = [['Italy', 'Serie A',135 ], ['Italy', 'Serie B',136 ], ['England', 'Premier League',39 ], ['England', 'Championship',40 ], ['England', 'League One',41], ['England', 'League Two', 42 ], 
+                ['Spain', 'La Liga',140 ], ['Spain', 'Segunda Division',141 ] ,['Germany','Bundesliga',78 ],['Germany','Bundesliga 2',79],['France', 'Ligue 1',61 ],['France', 'Ligue 2',62 ],
+                ['Scotland','SPL',179], ['Netherlands', 'Eredivisie',88 ], ['Netherlands', 'Eerste Divisie',89], 
+                ['Portugal','Portugese Liga NOS', 94],['Turkey','Turkish Super Lig', 203],['Greece','Greek Super League',197],['Belgium','Pro League',144], ['Brazil','Serie A',71],['Brazil','Serie B',72],
+                ['Austria','Bundesliga',218], ['Argentina','Primera Division',128],['Denmark', 'Superliga',119], ['USA','US MLS',253],
+                ['Norway','Norwegian Eliteserien',103],['Switzerland','Swiss Super League',207],['Mexico','Liga MX',262]]
+                        
     def create_goals_total_database(self):
         for goals_quantity in self.goal_total_quantities:
-            for country, league in self.country_list:
-                goals_instance = Goals(country, league, goals_quantity)
+            for country, league, api_id in self.country_list:
+                goals_instance = Goals(country, league, goals_quantity, api_id)
                 data = goals_instance.create_goals_table()
                 print(data)
     
     def create_corners_database(self):
         for corner_quantity in self.corner_quantities:
-            for country, league in self.country_list_corners:
-                corners_instance = Corners(country, league, corner_quantity)
+            for country, league,api_id in self.country_list:
+                corners_instance = Corners(country, league, corner_quantity, api_id)
                 data = corners_instance.create_corners_table()
                 print(data)
     
     def create_goals_scored_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
-            for country, league in self.country_list:
-                team_goals_instance = TeamGoals(country, league, goals_quantity)
+            for country, league,api_id in self.country_list:
+                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
                 data = team_goals_instance.create_goals_scored_table()
                 print(data)
     
     def create_goals_conceded_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
-            for country, league in self.country_list:
-                team_goals_instance = TeamGoals(country, league, goals_quantity)
+            for country, league, api_id in self.country_list:
+                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
                 data = team_goals_instance.create_goals_conceded_table()
                 print(data)
 
     def update_goals_database(self):
         for goals_quantity in self.goal_total_quantities:
-            for country, league in self.country_list:
-                goals_instance = Goals(country, league, goals_quantity)
+            for country, league, api_id in self.country_list:
+                goals_instance = Goals(country, league, goals_quantity,api_id)
                 data = goals_instance.update_goals_table()
                 print(data)
     
     def update_corners_database(self):
         for corner_quantity in self.corner_quantities:
-            for country, league in self.country_list_corners:
-                corners_instance = Corners(country, league, corner_quantity)
+            for country, league, api_id in self.country_list:
+                corners_instance = Corners(country, league, corner_quantity, api_id)
                 data = corners_instance.update_corners_table()
                 print(data)
     
