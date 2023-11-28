@@ -11,11 +11,11 @@ import mysql.connector
 from database_connection import DatabaseConnection
 
 class Goals:
-    def __init__(self, country, league, goal_quantity, api_id):
+    def __init__(self, country, league, goal_quantity, api_team_id):
         self.country = country
         self.league = league
         self.goal_quantity = goal_quantity
-        self.api_id = api_id
+        self.api_team_id = api_team_id
         
     def create_goals_table(self):
                 
@@ -81,19 +81,39 @@ class Goals:
         connection = DatabaseConnection.connect()
         cursor = connection.cursor()
         
+        self.goal_quantity.replace('Over ','')
+        ###testar essas linhas!!!!!        
         for line in my_list:                        
+            if self.goal_quantity == '1.5':
+                type_id = 2
+            elif self.goal_quantity == '2.5':
+                type_id = 3        
+            elif self.goal_quantity == '3.5':
+                type_id = 4  
+                                        
             team_name, total, home, away = line 
-            ##preciso buscar league_id para completar a tabela
-            query = 'INSERT INTO team (name,api_id) VALUES (%s, %s)'
-            values = (team_name, self.api_id)
+            query = f"SELECT country_id FROM country WHERE name = {self.country} "           
+            cursor.execute(query)            
+            country_id = cursor.fetchone()
+            
+            query = f"SELECT leaague_id FROM league WHERE country_id = {country_id} AND name = '{self.league}"           
+            cursor.execute(query)            
+            league_id = cursor.fetchone()
+            
+            query = 'INSERT INTO team (name, api_id, league_id) VALUES (%s, %s, %s)'
+            values = (team_name, self.api_team_id, league_id)
             try:
                 cursor.execute(query, values)
             except mysql.connector.Error as err:
                 print(f"MySQL Error: {err}")
                 connection.rollback()
-                        
-            query = 'INSERT INTO goals_scored_conceded (total, home, away) VALUES (%s, %s, %s)'
-            values = (total, home, away)
+            
+            query = f"SELECT team_id FROM team WHERE name = {team_name}"           
+            cursor.execute(query)            
+            team_id = cursor.fetchone()
+                                               
+            query = 'INSERT INTO goals_scored_conceded (team_ai,type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
+            values = (team_id, type_id, total, home, away)
             try:
                 cursor.execute(query, values)
             except mysql.connector.Error as err:
