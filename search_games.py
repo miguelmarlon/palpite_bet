@@ -20,7 +20,7 @@ current_date = datetime.now()
 next_date = current_date + timedelta(days=1)
 formatted_next_date_for_api_search = next_date.strftime("%Y-%m-%d")
 date_for_telegram_posting = next_date.strftime("%d-%m")
-message_for_next_day_games = f'🤑🤑⚽ PALPITES PARA O DIA {date_for_telegram_posting} ⚽🤑🤑'
+message_for_next_day_games = f'🤑🤑⚽ PALPITES PARA O DIA 28-11 ⚽🤑🤑'
 
 def search_next_day_games():
     
@@ -30,7 +30,7 @@ def search_next_day_games():
     RapidAPI = os.getenv('RapidAPI')
     
     for country_list in list_country_id:
-        query_params = {"date": '2023-11-26', "league": country_list[2], "season": "2023"}
+        query_params = {"date": '2023-11-28', "league": country_list[2], "season": "2023"}
         headers = {
             "X-RapidAPI-Key": RapidAPI,
             "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
