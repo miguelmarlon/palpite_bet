@@ -1,14 +1,11 @@
 from data_processor import DataProcessor
 from dotenv import load_dotenv
 import os
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 from create_database import CreateDatabase
 from send_telegram_message import *
 
-def search_team_by_name(cursor, team_name):
-        team_query = "SELECT * FROM goals WHERE name LIKE %s"
-        cursor.execute(team_query, (f'%{team_name}%',))
-        return cursor.fetchall()
+
     
 conexao = DatabaseConnection.connect()
 cursor = conexao.cursor()
@@ -36,7 +33,7 @@ while True:
             while True:
                 
                 home_team = input('ENTER THE NAME OF THE HOME TEAM:')
-                result_home = search_team_by_name(cursor, home_team)
+                result_home = DatabaseConnection.search_team_by_name(cursor, home_team)
 
                 if result_home:
                     home_team_names = set(row[2] for row in result_home)
@@ -54,7 +51,7 @@ while True:
                         print(f"The chosen team name is: {home_team}")
 
                     away_team = input('ENTER THE NAME OF THE AWAY TEAM:')
-                    result_away = search_team_by_name(cursor, away_team)
+                    result_away = DatabaseConnection.search_team_by_name(cursor, away_team)
 
                     if result_away:
                         away_team_names = set(row[2] for row in result_away)

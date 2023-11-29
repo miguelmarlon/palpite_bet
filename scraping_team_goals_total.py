@@ -8,16 +8,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import mysql.connector
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 
 class Goals:
-    def __init__(self, country, league, goal_quantity, api_team_id):
+    def __init__(self, country, league, goal_quantity, api_country_id):
         self.country = country
         self.league = league
         self.goal_quantity = goal_quantity
-        self.api_team_id = api_team_id
+        self.api_country_id = api_country_id
         
-    def create_goals_table(self):
+    def create_goals_scored_conceded_table(self):
                 
         options= Options()
         options.add_argument('window-size=800,1200')
@@ -79,53 +79,57 @@ class Goals:
             my_list.append(statistics_list)
           
         connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
+        cursor = connection.cursor(buffered=True)
         
-        self.goal_quantity.replace('Over ','')
-        ###testar essas linhas!!!!!        
-        for line in my_list:                        
-            if self.goal_quantity == '1.5':
-                type_id = 2
-            elif self.goal_quantity == '2.5':
-                type_id = 3        
-            elif self.goal_quantity == '3.5':
-                type_id = 4  
-                                        
+        variable_amount_of_goals_scored =self.goal_quantity.replace('Over ','')
+        float(variable_amount_of_goals_scored)
+               
+        for line in my_list:                                                   
             team_name, total, home, away = line 
-            query = f"SELECT country_id FROM country WHERE name = {self.country} "           
-            cursor.execute(query)            
-            country_id = cursor.fetchone()
             
-            query = f"SELECT leaague_id FROM league WHERE country_id = {country_id} AND name = '{self.league}"           
-            cursor.execute(query)            
-            league_id = cursor.fetchone()
+            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
+            if search_team:
+                continue
+            else:
+                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)
+                
+                   
+            if variable_amount_of_goals_scored == '1.5':
+                type_id = 2
+            elif variable_amount_of_goals_scored == '2.5':
+                type_id = 3        
+            elif variable_amount_of_goals_scored == '3.5':
+                type_id = 4 
+                   
+            team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
             
-            query = 'INSERT INTO team (name, api_id, league_id) VALUES (%s, %s, %s)'
-            values = (team_name, self.api_team_id, league_id)
-            try:
-                cursor.execute(query, values)
-            except mysql.connector.Error as err:
-                print(f"MySQL Error: {err}")
-                connection.rollback()
+            if team_id_result:
+                team_id = team_id_result[0]
+                
+                query_check_duplicate = (
+                    "SELECT 1 FROM goals_scored_conceded "
+                    "WHERE team_id = %s AND type_id = %s"
+                )
+                cursor.execute(query_check_duplicate, (team_id, type_id))
+                
+                if cursor.fetchone():
             
-            query = f"SELECT team_id FROM team WHERE name = {team_name}"           
-            cursor.execute(query)            
-            team_id = cursor.fetchone()
-                                               
-            query = 'INSERT INTO goals_scored_conceded (team_ai,type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
-            values = (team_id, type_id, total, home, away)
-            try:
-                cursor.execute(query, values)
-            except mysql.connector.Error as err:
-                print(f"MySQL Error: {err}")
-                connection.rollback()
+                    continue
+                                             
+                query = 'INSERT INTO goals_scored_conceded (team_id, type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
+                values = (team_id, type_id, total, home, away)
+                try:
+                    cursor.execute(query, values)
+                except mysql.connector.Error as err:
+                    print(f"MySQL Error: {err}")
+                    connection.rollback()
         
         connection.commit()
         connection.close()
                
         return my_list
     
-    def update_goals_table(self):
+    def update_goals_scored_conceded_table(self):
                 
         options= Options()
         options.add_argument('window-size=800,1200')
@@ -138,7 +142,7 @@ class Goals:
         my_list=[] 
         statistics_list =[]
        
-        country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
+        country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '/html[1]/body[1]/div[2]/div[1]/div[1]/div[2]/div[1]/country-select[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/select[1]')))
         select = Select(country_button)
         select.select_by_visible_text(self.country)
         sleep(2)        
@@ -188,18 +192,32 @@ class Goals:
             
         connection = DatabaseConnection.connect()
         cursor = connection.cursor()
-           
+        
+        variable_amount_of_goals_scored =self.goal_quantity.replace('Over ','')
+        float(variable_amount_of_goals_scored)
+          
         for linha in my_list:
-            team_name, total, home, away = linha 
-            query = "UPDATE goals SET total = %s, home = %s, away = %s WHERE type = %s AND name = %s"
-            type= self.goal_quantity.replace('Over ', '')
-            valores = (total, home, away, type, team_name)
-    
-            try:
-                cursor.execute(query, valores)
-            except mysql.connector.Error as err:
-                print(f"Erro MySQL: {err}")
-                connection.rollback()
+            team_name, total, home, away = linha
+            
+            if variable_amount_of_goals_scored == '1.5':
+                type_id = 2
+            elif variable_amount_of_goals_scored == '2.5':
+                type_id = 3        
+            elif variable_amount_of_goals_scored == '3.5':
+                type_id = 4 
+            
+            team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
+            if team_id_result:
+                team_id = team_id_result[0]
+                query_update = "UPDATE goals_scored_conceded SET total = %s, home = %s, away = %s WHERE team_id = %s AND type_id = %s"
+                
+                valores = (total, home, away, team_id, type_id)
+        
+                try:
+                    cursor.execute(query_update, valores)
+                except mysql.connector.Error as err:
+                    print(f"Erro MySQL: {err}")
+                    connection.rollback()
        
         connection.commit()
         connection.close()

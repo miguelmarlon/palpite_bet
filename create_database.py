@@ -3,13 +3,13 @@ from scraping_team_goals_total import Goals
 import mysql.connector
 from dotenv import load_dotenv
 import os
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 from scraping_team_goals import TeamGoals
   
 class CreateDatabase:
     goal_team_goals_quantities = ['Over 0.5', 'Over 1.5', 'Over 2.5']
     goal_total_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5']
-    corner_quantities = ['7.5', '8.5', '10.5', '11.5', '12.5']
+    corner_quantities = ['7.5', '8.5','9.5', '10.5', '11.5', '12.5']
 
     #pegar as informações do banco de dados
     country_list = [['Italy', 'Serie A',135 ], ['Italy', 'Serie B',136 ], ['England', 'Premier League',39 ], ['England', 'Championship',40 ], ['England', 'League One',41], ['England', 'League Two', 42 ], 
@@ -23,7 +23,7 @@ class CreateDatabase:
         for goals_quantity in self.goal_total_quantities:
             for country, league, api_id in self.country_list:
                 goals_instance = Goals(country, league, goals_quantity, api_id)
-                data = goals_instance.create_goals_table()
+                data = goals_instance.create_goals_scored_conceded_table()
                 print(data)
     
     def create_corners_database(self):
@@ -51,7 +51,7 @@ class CreateDatabase:
         for goals_quantity in self.goal_total_quantities:
             for country, league, api_id in self.country_list:
                 goals_instance = Goals(country, league, goals_quantity,api_id)
-                data = goals_instance.update_goals_table()
+                data = goals_instance.update_goals_scored_conceded_table()
                 print(data)
     
     def update_corners_database(self):
