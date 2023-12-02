@@ -24,20 +24,18 @@ class Goals:
         options.add_argument("--lang=en-US")
         options.add_argument("--country-code=US")  
         driver = webdriver.Chrome(options=options)
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 30)
         driver.get('https://www.adamchoi.co.uk/overs/detailed')
-        sleep(2)        
+              
         my_list=[] 
         statistics_list=[]
         
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
         select = Select(country_button)
-        select.select_by_visible_text(self.country)
-                
+        select.select_by_visible_text(self.country)        
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(league_button)
         select.select_by_visible_text(self.league)
-        
         over_button = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.goal_quantity}"])[1]'))).click()
         sleep(2)
         
@@ -87,20 +85,19 @@ class Goals:
         for line in my_list:                                                   
             team_name, total, home, away = line 
             
-            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
-            if search_team:
-                continue
-            else:
-                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)
-                
-                   
             if variable_amount_of_goals_scored == '1.5':
                 type_id = 2
             elif variable_amount_of_goals_scored == '2.5':
                 type_id = 3        
             elif variable_amount_of_goals_scored == '3.5':
                 type_id = 4 
-                   
+                
+            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
+            if search_team:
+                print(search_team)
+            else:
+                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)
+                                      
             team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
             
             if team_id_result:
@@ -144,12 +141,10 @@ class Goals:
        
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '/html[1]/body[1]/div[2]/div[1]/div[1]/div[2]/div[1]/country-select[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/select[1]')))
         select = Select(country_button)
-        select.select_by_visible_text(self.country)
-        sleep(2)        
+        select.select_by_visible_text(self.country)    
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(league_button)
         select.select_by_visible_text(self.league)
-        sleep(2)
         button_over = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.goal_quantity}"])[1]'))).click()
         sleep(2)
 

@@ -8,14 +8,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import mysql.connector
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 
 class TeamGoals:
-    def __init__(self, country, league, goal_quantity):
+    def __init__(self, country, league, goal_quantity, api_league_id):
         self.country = country
         self.league = league
         self.goal_quantity = goal_quantity
-        
+        self.api_league_id = api_league_id
         
     def create_goals_scored_table(self):
                 
@@ -24,7 +24,7 @@ class TeamGoals:
         options.add_argument("--lang=en-US")
         options.add_argument("--country-code=US")  
         driver = webdriver.Chrome(options=options)
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 30)
         driver.get('https://www.adamchoi.co.uk/teamgoals/detailed')
         sleep(2)        
         my_list=[]
@@ -76,23 +76,54 @@ class TeamGoals:
                 ]
             
             my_list.append(statistics_list)
+            
         connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
+        cursor = connection.cursor(buffered=True)
+        
+        variable_amount_of_goals_scored =self.goal_quantity.replace('Over ','')
+        float(variable_amount_of_goals_scored)
         
         for line in my_list:
             team_name, total, home, away = line 
-            query = 'INSERT INTO test_scored (type, name, total, home, away, country, league) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-            values = (self.goal_quantity.replace('Over ',''), team_name, total, home, away, self.country, self.league)
-            try:
-                cursor.execute(query, values)
-            except mysql.connector.Error as err:
-                print(f"MySQL Error: {err}")
-                connection.rollback()
+            if variable_amount_of_goals_scored == '0.5':
+                type_id = 1
+            elif variable_amount_of_goals_scored == '1.5':
+                type_id = 2
+            elif variable_amount_of_goals_scored == '2.5':
+                type_id = 3
+            
+            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
+            if search_team:
+                print(search_team)
+            else:
+                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)   
+                
+            team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)         
+            print(team_id_result)
+            if team_id_result:
+                team_id = team_id_result[0]
+                
+                query_check_duplicate = (
+                    "SELECT 1 FROM goals_scored "
+                    "WHERE team_id = %s AND type_id = %s"
+                )
+                cursor.execute(query_check_duplicate, (team_id, type_id))
+                
+                if cursor.fetchone():
+            
+                    continue
+                                             
+                query = 'INSERT INTO goals_scored (team_id, type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
+                values = (team_id, type_id, total, home, away)
+                try:
+                    cursor.execute(query, values)
+                except mysql.connector.Error as err:
+                    print(f"MySQL Error: {err}")
+                    connection.rollback()
         
         connection.commit()
-        connection.close()
-        
-        print(my_list)
+        connection.close()    
+        return my_list
         
     def create_goals_conceded_table(self):
                 
@@ -101,16 +132,15 @@ class TeamGoals:
         options.add_argument("--lang=en-US")
         options.add_argument("--country-code=US")  
         driver = webdriver.Chrome(options=options)
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 30)
         driver.get('https://www.adamchoi.co.uk/teamgoals/detailed')
-        sleep(2)        
+               
         my_list=[] 
         statistics_list=[]
         
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
         select = Select(country_button)
-        select.select_by_visible_text(self.country)
-                
+        select.select_by_visible_text(self.country)       
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(league_button)
         select.select_by_visible_text(self.league)
@@ -153,22 +183,52 @@ class TeamGoals:
                 ]
             
             my_list.append(statistics_list)
+            
         connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
+        cursor = connection.cursor(buffered=True)
+        
+        variable_amount_of_goals_conceded =self.goal_quantity.replace('Over ','')
+        float(variable_amount_of_goals_conceded)
         
         for line in my_list:
             team_name, total, home, away = line 
-            query = 'INSERT INTO test_conceded (type, name, total, home, away, country, league) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-            values = (self.goal_quantity.replace('Over ',''), team_name, total, home, away, self.country, self.league)
-            try:
-                cursor.execute(query, values)
-            except mysql.connector.Error as err:
-                print(f"MySQL Error: {err}")
-                connection.rollback()
+            
+            if variable_amount_of_goals_conceded == '0.5':
+                type_id = 1
+            elif variable_amount_of_goals_conceded == '1.5':
+                type_id = 2
+            elif variable_amount_of_goals_conceded == '2.5':
+                type_id = 3
+            
+            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
+            if search_team:
+                print(search_team)
+            else:
+                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)   
+                
+            team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)         
+            
+            if team_id_result:
+                team_id = team_id_result[0]
+                
+                query_check_duplicate = (
+                    "SELECT 1 FROM goals_conceded "
+                    "WHERE team_id = %s AND type_id = %s"
+                )
+                cursor.execute(query_check_duplicate, (team_id, type_id))
+                
+                if cursor.fetchone():
+            
+                    continue
+                                             
+                query = 'INSERT INTO goals_conceded (team_id, type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
+                values = (team_id, type_id, total, home, away)
+                try:
+                    cursor.execute(query, values)
+                except mysql.connector.Error as err:
+                    print(f"MySQL Error: {err}")
+                    connection.rollback()
         
         connection.commit()
-        connection.close()
-        
-        print(my_list)
-        
-        
+        connection.close()       
+        return my_list  

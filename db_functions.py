@@ -17,13 +17,17 @@ class DatabaseConnection:
 
     def search_team_by_name(cursor, team_name):
         team_query = "SELECT * FROM team WHERE name LIKE %s"
-        cursor.execute(team_query, (f'%{team_name}%',))
-        return cursor.fetchall()
+        cursor.execute(team_query, (team_name,))
+        result = cursor.fetchall()
+        return result
     
     def search_and_select_team_id_by_name(cursor, team_name):
-        query_select_team_id = f'SELECT team_id FROM team WHERE name = "{team_name}"'          
-        cursor.execute(query_select_team_id)            
-        return cursor.fetchone()
+        print(f"Searching for team ID for team name: {team_name}")
+        query_select_team_id = f'SELECT team_id FROM team WHERE name = %s'          
+        cursor.execute(query_select_team_id, (team_name,))
+        result = cursor.fetchone()
+        print(f"Result: {result}")            
+        return result
     
     def create_team_table(cursor, team_name, country, league):
         connection = DatabaseConnection.connect()

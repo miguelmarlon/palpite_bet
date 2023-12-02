@@ -26,7 +26,7 @@ class Corners:
         options.add_argument('window-size=800,1200')
 
         browser = webdriver.Chrome(options=options)
-        wait = WebDriverWait(browser, 10)
+        wait = WebDriverWait(browser, 30)
         browser.get('https://www.adamchoi.co.uk/corners/detailed')
 
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
@@ -40,7 +40,7 @@ class Corners:
         select_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="page-wrapper"]/div/div[3]/div/div[2]/div/select')))
         select = Select(select_element)
         select.select_by_visible_text(self.corner_quantity)
-        sleep(3)
+        sleep(2)
 
         page_content = browser.page_source
         site = BeautifulSoup(page_content, 'html.parser')
@@ -100,19 +100,13 @@ class Corners:
             my_list.append(team_list)
 
         connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
+        cursor = connection.cursor(buffered=True)
         variable_amount_corners = float(self.corner_quantity)
 
         for line in my_list:
             team_name, total, home, away = line
+            print(team_name, total, home, away)
             
-            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
-            
-            if search_team:
-                continue
-            else:
-                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)
-                                              
             if variable_amount_corners == 7.5:
                 type_id = 1
             elif variable_amount_corners == 8.5:
@@ -125,11 +119,17 @@ class Corners:
                 type_id = 5 
             elif variable_amount_corners == 12.5:
                 type_id = 6 
-                            
+            
+            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
+            if search_team:
+                print("Continuing to next team")
+                
+            else:
+                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)                                
+                                                  
             team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
             if team_id_result:
                 team_id = team_id_result[0]
-                
                 query_check_duplicate = (
                     "SELECT 1 FROM corners "
                     "WHERE team_id = %s AND type_id = %s"
@@ -146,7 +146,8 @@ class Corners:
                 except mysql.connector.Error as err:
                     print(f"MySQL Error: {err}")
                     connection.rollback()
-                    
+            else:
+                print('Id não encontrado')        
         connection.commit()
         connection.close()
 
@@ -161,7 +162,7 @@ class Corners:
         options.add_argument('window-size=800,1200')
 
         browser = webdriver.Chrome(options=options)
-        wait = WebDriverWait(browser, 20)
+        wait = WebDriverWait(browser, 30)
         browser.get('https://www.adamchoi.co.uk/corners/detailed')
 
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
@@ -271,7 +272,7 @@ class Corners:
                     except mysql.connector.Error as err:
                         print(f"Erro MySQL: {err}")
                         connection.rollback()
-           
+                
         connection.commit()
         connection.close()
 

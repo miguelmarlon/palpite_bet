@@ -3,7 +3,7 @@ import telegram
 import asyncio
 from dotenv import load_dotenv
 import os
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 from send_telegram_message import *
 
 class DataProcessor:
@@ -14,59 +14,7 @@ class DataProcessor:
         self.total_goals = None
         self.home_goals = None
         self.away_goals = None
-               
-    def goal_statistics(self):
-        connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
-
-        query_home_team = "SELECT * FROM goals WHERE name LIKE %s"
-        cursor.execute(query_home_team, (f'%{self.home_team}%',))
-        result_home_team = cursor.fetchall()
-
-        query_away_team = "SELECT * FROM goals WHERE name LIKE %s"
-        cursor.execute(query_away_team, (f'%{self.away_team}%',))
-        result_away_team = cursor.fetchall()
-
-        print('Goal Statistics:')
-        print(self.home_team)
-        for item in result_home_team:
-            print(item)
-
-        print()
-        print(self.away_team)
-        for item in result_away_team:
-            print(item)
-        print()
-
-        cursor.close()
-        connection.close()
-        
-    def corners_statistics(self):
-        connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
-
-        #trocar o * pelas colunas realmente necessarias
-        query_home_team = "SELECT * FROM corners WHERE name LIKE %s"
-        cursor.execute(query_home_team, (f'%{self.home_team}%',))
-        result_home_team = cursor.fetchall()
-
-        query_away_team = "SELECT * FROM corners WHERE name LIKE %s"
-        cursor.execute(query_away_team, (f'%{self.away_team}%',))
-        result_away_team = cursor.fetchall()
-
-        print('Corners Statistics:')
-        print(self.home_team)
-        for item in result_home_team:
-            print(item)
-
-        print()
-        print(self.away_team)
-        for item in result_away_team:
-            print(item)
-
-        cursor.close()
-        connection.close()
-    
+       
     def additional_goals_statistics(self):
                 
         connection = DatabaseConnection.connect()      
