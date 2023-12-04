@@ -52,7 +52,7 @@ class DatabaseConnection:
         
         connection.commit()
     
-    def query_goals_scored(cursor, team_name, type_goal):
+    def query_goals(cursor, table, team_name, type_goal):
         query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
         cursor.execute(query_team_name, (team_name,))
         result_team_name = cursor.fetchall() 
@@ -61,7 +61,7 @@ class DatabaseConnection:
         cursor.execute(query_type_goal, (type_goal,))
         result_type_goal = cursor.fetchall()
         
-        query = 'SELECT total, home, away FROM goals_scored WHERE team_id = %s AND type_id = %s'
+        query = f'SELECT total, home, away FROM {table} WHERE team_id = %s AND type_id = %s'
         cursor.execute(query, (result_team_name[0][0], result_type_goal[0][0]))
         result_goals_scored = cursor.fetchall() 
         
@@ -75,26 +75,26 @@ class DatabaseConnection:
         df_team_name = pd.DataFrame(data, columns=columns)
         return df_team_name
     
-    def query_goals_conceded(cursor, team_name, type_goal):
-        query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
-        cursor.execute(query_team_name, (team_name,))
-        result_team_name = cursor.fetchall() 
+    # def query_goals_conceded(cursor, team_name, type_goal):
+    #     query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
+    #     cursor.execute(query_team_name, (team_name,))
+    #     result_team_name = cursor.fetchall() 
             
-        query_type_goal = 'SELECT type_goal_id, type FROM type WHERE type_goal LIKE %s'
-        cursor.execute(query_type_goal, (type_goal,))
-        result_type_goal = cursor.fetchall()
+    #     query_type_goal = 'SELECT type_goal_id, type FROM type WHERE type_goal LIKE %s'
+    #     cursor.execute(query_type_goal, (type_goal,))
+    #     result_type_goal = cursor.fetchall()
         
-        query = 'SELECT total, home, away FROM goals_conceded WHERE team_id = %s AND type_id = %s'
-        cursor.execute(query, (result_team_name[0][0], result_type_goal[0][0]))
-        result_goals_scored = cursor.fetchall() 
+    #     query = 'SELECT total, home, away FROM goals_conceded WHERE team_id = %s AND type_id = %s'
+    #     cursor.execute(query, (result_team_name[0][0], result_type_goal[0][0]))
+    #     result_goals_scored = cursor.fetchall() 
         
-        columns = ['team_id', 'name', 'type_goal_id', 'type_goal', 'total', 'home', 'away']
-        data = []
+    #     columns = ['team_id', 'name', 'type_goal_id', 'type_goal', 'total', 'home', 'away']
+    #     data = []
 
-        for team_row, type_goal_row, goals_row in zip(result_team_name, result_type_goal, result_goals_scored):
-            row = team_row + type_goal_row + goals_row
-            data.append(row)
+    #     for team_row, type_goal_row, goals_row in zip(result_team_name, result_type_goal, result_goals_scored):
+    #         row = team_row + type_goal_row + goals_row
+    #         data.append(row)
 
-        df_team = pd.DataFrame(data, columns=columns)
-        return df_team
+    #     df_team = pd.DataFrame(data, columns=columns)
+    #     return df_team
         

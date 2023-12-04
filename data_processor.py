@@ -28,22 +28,22 @@ class DataProcessor:
         df_conceded_away_team = pd.DataFrame()
         
         for goal in type_goal:
-            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals_scored(cursor, self.home_team, goal)
+            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored', self.home_team, goal)
             df_scored_home_team = pd.concat([df_scored_home_team, object_db_funcitions_home_team_scored])
             
-            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals_scored(cursor, self.away_team, goal)
+            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored', self.away_team, goal)
             df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
             
-            object_db_funcitions_home_team_conceded = DatabaseConnection.query_goals_scored(cursor, self.home_team, goal)
+            object_db_funcitions_home_team_conceded = DatabaseConnection.query_goals(cursor, 'goals_conceded', self.home_team, goal)
             df_conceded_home_team = pd.concat([df_conceded_home_team, object_db_funcitions_home_team_conceded])
             
-            object_db_funcitions_away_team_conceded = DatabaseConnection.query_goals_scored(cursor, self.away_team, goal)
+            object_db_funcitions_away_team_conceded = DatabaseConnection.query_goals(cursor, 'goals_conceded', self.away_team, goal)
             df_conceded_away_team = pd.concat([df_conceded_away_team, object_db_funcitions_away_team_conceded])        
                      
         message_home_team = f'{self.home_team} tem estatística de gols marcados como mandante:\n' 
         for index, row in df_scored_home_team.iterrows():
             message_home_team += f'{row["type_goal"]}: {row["home"]}%\n'
-        message_home_team += f'\n{self.home_team} tem estatística de gols sofridos como mandante:\n'
+        message_home_team += f'{self.home_team} tem estatística de gols sofridos como mandante:\n'
         for index, row in df_conceded_home_team.iterrows():
             message_home_team += f'{row["type_goal"]}: {row["home"]}%\n'
         
@@ -65,62 +65,60 @@ class DataProcessor:
     def filtered_goal_statistics(self):
         connection = DatabaseConnection.connect()      
         cursor = connection.cursor()
-
-        query_home_team = "SELECT * FROM goals WHERE name LIKE %s"
-        cursor.execute(query_home_team, (f'%{self.home_team.lower()}%',))
-        result_home_team = cursor.fetchall()
-
-        query_away_team = "SELECT * FROM goals WHERE name LIKE %s"
-        cursor.execute(query_away_team, (f'%{self.away_team.lower()}%',))
-        result_away_team = cursor.fetchall()
-
-        type_goals_list=[]
-        final_data = []
-
-        for tuple_away_team, tuple_home_team in zip(result_away_team, result_home_team):
-            key = tuple_away_team[1]
-            total = (tuple_away_team[3] + tuple_home_team[3]) / 2
-            home_vs_away = (tuple_away_team[4] + tuple_home_team[5]) / 2
-            final_data.append((key, total, home_vs_away))
-
-        df = pd.DataFrame(final_data, columns=['goals', 'total', 'home_vs_away'])
-        df_filtered_goals_above = df[(df['total'] >= 75) & (df['home_vs_away'] >= 75)]
-        df_filtered_goals_below = df[(df['total'] <= 25) & (df['home_vs_away'] <= 25)]
-
+        type_goal=[1.5, 2.5, 3.5]
+        df_scored_home_team = pd.DataFrame()
+        df_scored_away_team = pd.DataFrame()
+        df_result = pd.DataFrame()
         message = ''
         message_goals_above = ''
         message_goals_below = ''
+        
+        for goal in type_goal:
+            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.home_team, goal)
+            df_scored_home_team = pd.concat([df_scored_home_team, object_db_funcitions_home_team_scored])
+            
+            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.away_team, goal)
+            df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
+          
+                
+        df_result['home_team']= df_scored_home_team['name'] 
+        df_result['away_team']= df_scored_away_team['name']
+        df_result['type_goal']= df_scored_away_team['type_goal']
+        df_result['total']= (df_scored_home_team['total'] + df_scored_away_team['total'])/2
+        df_result['average_home_away']= (df_scored_home_team['home']+df_scored_away_team['away'])/2
+       
+        df_filtered_goals_above = df_result[(df_result['total'] >= 75) & (df_result['average_home_away'] >= 75)]
+        df_filtered_goals_below = df_result[(df_result['total'] <= 25) & (df_result['average_home_away'] <= 25)]
+        
+        print(df_filtered_goals_above)
+        print(df_filtered_goals_below)
+   
                 
         if not df_filtered_goals_above.empty:
             message_goals_above = f"⚽Oportunidade para {self.home_team} vs {self.away_team} ⚽:\n\n"
             goals_above_added = set()
             for index, row in df_filtered_goals_above.iterrows():
-                type_goals_above = row['goals']
-                home_vs_away = row['home_vs_away']                                  
+                type_goals_above = row['type_goal']
+                home_vs_away = row['average_home_away']                                  
                 message_goals_above += f"Gols acima de {type_goals_above}: {home_vs_away}% 🎯\n"
                 goals_above_added.add(type_goals_above)
-                if type_goals_above == 1.5:
-                    type_goals_list.append(type_goals_above)
+                
              
         if not df_filtered_goals_below.empty:
             message_goals_below = f"⚽Oportunidade para {self.home_team} vs {self.away_team} ⚽:\n\n"
             goals_below_added = set()
             for index, row in df_filtered_goals_below.iterrows():
-                type_goals_below = row['goals']
-                home_vs_away = 100 - row['home_vs_away']                               
+                type_goals_below = row['type_goal']
+                home_vs_away = 100 - row['average_home_away']                               
                 message_goals_below += f"Gols abaixo de {type_goals_below}: {home_vs_away}% 🎯\n"  
-                goals_below_added.add(type_goals_below)
-                if type_goals_below == 3.5:
-                    type_goals_below = type_goals_below * -1
-                    type_goals_list.append(type_goals_below) 
+                goals_below_added.add(type_goals_below)        
                 
         message += message_goals_above
         message += message_goals_below
         
         if message:
             asyncio.run(send_message_with_retry(message))
-            for type in type_goals_list:
-                self.additional_goals_statistics()
+            self.additional_goals_statistics()
         cursor.close()
         connection.close()
    
