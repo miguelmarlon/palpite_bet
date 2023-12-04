@@ -55,7 +55,7 @@ def search_next_day_games():
     for home_team, away_team in team_names:       
         data_processor_obj = DataProcessor(home_team, away_team)
         data_processor_obj.filtered_goal_statistics()   
-        data_processor_obj.filtered_corners_statistics()
+        # data_processor_obj.filtered_corners_statistics()
 
 if __name__ == "__main__":
     asyncio.run(send_message_with_retry(message_for_next_day_games))

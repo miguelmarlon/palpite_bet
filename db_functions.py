@@ -52,13 +52,13 @@ class DatabaseConnection:
         
         connection.commit()
     
-    def query_goals(cursor, table, team_name, type_goal):
+    def query_goals_corners(cursor, table, team_name, type):
         query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
         cursor.execute(query_team_name, (team_name,))
         result_team_name = cursor.fetchall() 
             
         query_type_goal = 'SELECT type_goal_id, type FROM type_goals WHERE type LIKE %s'
-        cursor.execute(query_type_goal, (type_goal,))
+        cursor.execute(query_type_goal, (type,))
         result_type_goal = cursor.fetchall()
         
         query = f'SELECT total, home, away FROM {table} WHERE team_id = %s AND type_id = %s'

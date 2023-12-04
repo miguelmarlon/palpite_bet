@@ -28,16 +28,16 @@ class DataProcessor:
         df_conceded_away_team = pd.DataFrame()
         
         for goal in type_goal:
-            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored', self.home_team, goal)
+            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored', self.home_team, goal)
             df_scored_home_team = pd.concat([df_scored_home_team, object_db_funcitions_home_team_scored])
             
-            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored', self.away_team, goal)
+            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored', self.away_team, goal)
             df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
             
-            object_db_funcitions_home_team_conceded = DatabaseConnection.query_goals(cursor, 'goals_conceded', self.home_team, goal)
+            object_db_funcitions_home_team_conceded = DatabaseConnection.query_goals_corners(cursor, 'goals_conceded', self.home_team, goal)
             df_conceded_home_team = pd.concat([df_conceded_home_team, object_db_funcitions_home_team_conceded])
             
-            object_db_funcitions_away_team_conceded = DatabaseConnection.query_goals(cursor, 'goals_conceded', self.away_team, goal)
+            object_db_funcitions_away_team_conceded = DatabaseConnection.query_goals_corners(cursor, 'goals_conceded', self.away_team, goal)
             df_conceded_away_team = pd.concat([df_conceded_away_team, object_db_funcitions_away_team_conceded])        
                      
         message_home_team = f'{self.home_team} tem estatística de gols marcados como mandante:\n' 
@@ -73,11 +73,11 @@ class DataProcessor:
         message_goals_above = ''
         message_goals_below = ''
         
-        for goal in type_goal:
-            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.home_team, goal)
+        for type in type_goal:
+            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored_conceded', self.home_team, type)
             df_scored_home_team = pd.concat([df_scored_home_team, object_db_funcitions_home_team_scored])
             
-            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.away_team, goal)
+            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored_conceded', self.away_team, type)
             df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
           
                 
