@@ -28,16 +28,16 @@ class DataProcessor:
         df_conceded_away_team = pd.DataFrame()
         
         for goal in type_goal:
-            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored', self.home_team, goal)
+            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored', self.home_team, goal)
             df_scored_home_team = pd.concat([df_scored_home_team, object_db_funcitions_home_team_scored])
             
-            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored', self.away_team, goal)
+            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored', self.away_team, goal)
             df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
             
-            object_db_funcitions_home_team_conceded = DatabaseConnection.query_goals_corners(cursor, 'goals_conceded', self.home_team, goal)
+            object_db_funcitions_home_team_conceded = DatabaseConnection.query_goals(cursor, 'goals_conceded', self.home_team, goal)
             df_conceded_home_team = pd.concat([df_conceded_home_team, object_db_funcitions_home_team_conceded])
             
-            object_db_funcitions_away_team_conceded = DatabaseConnection.query_goals_corners(cursor, 'goals_conceded', self.away_team, goal)
+            object_db_funcitions_away_team_conceded = DatabaseConnection.query_goals(cursor, 'goals_conceded', self.away_team, goal)
             df_conceded_away_team = pd.concat([df_conceded_away_team, object_db_funcitions_away_team_conceded])        
                      
         message_home_team = f'{self.home_team} tem estatística de gols marcados como mandante:\n' 
@@ -74,10 +74,10 @@ class DataProcessor:
         message_goals_below = ''
         
         for type in type_goal:
-            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored_conceded', self.home_team, type)
+            object_db_funcitions_home_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.home_team, type)
             df_scored_home_team = pd.concat([df_scored_home_team, object_db_funcitions_home_team_scored])
             
-            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals_corners(cursor,'goals_scored_conceded', self.away_team, type)
+            object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.away_team, type)
             df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
           
                 
@@ -125,43 +125,48 @@ class DataProcessor:
     def filtered_corners_statistics(self):
         connection = DatabaseConnection.connect()
         cursor = connection.cursor()
-
-        query_home_team = f"SELECT * FROM corners WHERE name = '{self.home_team}'"
-        cursor.execute(query_home_team)
-        result_home_team = cursor.fetchall()
-
-        query_away_team = f"SELECT * FROM corners WHERE name = '{self.away_team}'"
-        cursor.execute(query_away_team)
-        result_away_team = cursor.fetchall()
-
-        final_data = []
-
-        for tuple_away_team, tuple_home_team in zip(result_away_team, result_home_team):
-            key = tuple_away_team[1]
-            total = (float(tuple_away_team[3]) + float(tuple_home_team[3])) / 2
-            home_vs_away = (float(tuple_away_team[4]) + float(tuple_home_team[5])) / 2
-            final_data.append((key, total, home_vs_away))
-
-        df = pd.DataFrame(final_data, columns=['corners', 'total', 'home_vs_away'])
-        df_filtered_corners_above = df[(df['total'] >= 75) & (df['home_vs_away'] >= 75)]
-        df_filtered_corners_below = df[(df['total'] <= 25) & (df['home_vs_away'] <= 25)]
-
+        type_corners=[7.5, 8.5, 9.5, 10.5, 11.5, 12.5]
+        df_corners_home_team = pd.DataFrame()
+        df_corners_away_team = pd.DataFrame()
+        df_result = pd.DataFrame()
         message = ''
         message_corners_above = ''
         message_corners_below = ''
-
+        
+        for type in type_corners:
+            object_db_funcitions_home_team_corners = DatabaseConnection.query_corners(cursor, self.home_team, type)
+            df_corners_home_team = pd.concat([df_corners_home_team, object_db_funcitions_home_team_corners])
+            
+            object_db_funcitions_away_team_corners = DatabaseConnection.query_corners(cursor, self.away_team, type)
+            df_corners_away_team = pd.concat([df_corners_away_team, object_db_funcitions_away_team_corners])
+        
+        print(df_corners_home_team)
+        print(df_corners_away_team)
+               
+        df_result['home_team']= df_corners_home_team['name'] 
+        df_result['away_team']= df_corners_away_team['name']
+        df_result['type_corners']= df_corners_away_team['type_corners']
+        df_result['total']= (df_corners_home_team['total'] + df_corners_away_team['total'])/2
+        df_result['average_home_away']= (df_corners_home_team['home']+ df_corners_away_team['away'])/2      
+        
+        df_filtered_corners_above = df_result[(df_result['total'] >= 70) & (df_result['average_home_away'] >= 70)]
+        df_filtered_corners_below = df_result[(df_result['total'] <= 25) & (df_result['average_home_away'] <= 25)]
+        
+        print(df_filtered_corners_above) 
+        print(df_filtered_corners_below)
+          
         if not df_filtered_corners_above.empty:
             message_corners_above = f"⚽Oportunidades para {self.home_team} vs {self.away_team} ⚽:\n\n"
             for index, row in df_filtered_corners_above.iterrows():
-                corners = row['corners']
-                home_vs_away = row['home_vs_away']
+                corners = row['type_corners']
+                home_vs_away = row['average_home_away']
                 message_corners_above += f"Escanteios acima de {corners}: {home_vs_away}% 🎌\n"
 
         if not df_filtered_corners_below.empty:
             message_corners_below = f"⚽Oportunidades para {self.home_team} vs {self.away_team} ⚽:\n\n"
             for index, row in df_filtered_corners_below.iterrows():
-                corners = row['corners']
-                home_vs_away = 100 - row['home_vs_away']
+                corners = row['type_corners']
+                home_vs_away = 100 - row['average_home_away']
                 message_corners_below += f"Escanteios abaixo de {corners}: {home_vs_away}% 🎌\n"
 
         message += message_corners_above

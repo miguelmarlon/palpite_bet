@@ -23,6 +23,6 @@ goal_total_quantities = ['Over 1.5']
 #         data = goals_instance.create_goals_scored_table()
 #         data = goals_instance.create_goals_conceded_table()
 
-data_processor_instance = DataProcessor('Juventus', 'Lazio')       
-data_processor_instance.filtered_goal_statistics()        
+data_processor_instance = DataProcessor('Bayern Munich', 'Dortmund')       
+data_processor_instance.filtered_corners_statistics()        
 a=1
