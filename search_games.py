@@ -29,7 +29,7 @@ def search_next_day_games():
     RapidAPI = os.getenv('RapidAPI')
     
     for country_list in list_country_id:
-        query_params = {"date": formatted_next_date_for_api_search, "league": country_list[2], "season": "2023"}
+        query_params = {"date": "2023-12-08", "league": country_list[2], "season": "2023"}
         headers = {
             "X-RapidAPI-Key": RapidAPI,
             "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"

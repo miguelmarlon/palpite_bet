@@ -4,13 +4,15 @@ import os
 from db_functions import DatabaseConnection
 from create_database import CreateDatabase
 from send_telegram_message import *
-
-
     
 conexao = DatabaseConnection.connect()
 cursor = conexao.cursor()
 load_dotenv()
 teams_list= []
+
+#criar no main uma maneira mais robusta de consultar os nomes dos times.
+#chamar a função search games
+#melhorar o menu de opções
 
 print()
 print('******************WELCOME TO THE PROGRAM!******************')

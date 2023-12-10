@@ -2,6 +2,10 @@ from scraping_team_goals_total import Goals
 from scraping_corners import Corners
 from scraping_team_goals import TeamGoals
 from data_processor import DataProcessor
+import requests
+from db_functions import DatabaseConnection
+from dotenv import load_dotenv
+import os
 
 corner_quantities = ['7.5', '8.5','9.5', '10.5', '11.5', '12.5']
 country_list = [['Italy', 'Serie A',135 ]]
@@ -23,6 +27,44 @@ goal_total_quantities = ['Over 1.5']
 #         data = goals_instance.create_goals_scored_table()
 #         data = goals_instance.create_goals_conceded_table()
 
-data_processor_instance = DataProcessor('Bayern Munich', 'Dortmund')       
-data_processor_instance.filtered_corners_statistics()        
+# data_processor_instance = DataProcessor('Bayern Munich', 'Dortmund')       
+# data_processor_instance.filtered_corners_statistics() 
+
+
+RapidAPI = os.getenv('RapidAPI')
+url = "https://api-football-v1.p.rapidapi.com/v3/teams"
+
+querystring = {"league":"136","season":"2023","country":"Italy"}
+
+headers = {
+	"X-RapidAPI-Key": RapidAPI,
+	"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+}
+
+response = requests.get(url, headers=headers, params=querystring)
+list_teams=[]
+
+if response.status_code == 200:
+    json_data = response.json()
+    data = json_data['response']
+    for team in data:
+        id = team['team']['id']
+        name = team['team']['name'].rstrip()
+        list_teams.append([id, name])
+else:
+    
+    print(f"Erro na solicitação: {response.status_code}")
+    
+print(list_teams)
+
+connection = DatabaseConnection.connect()
+cursor = connection.cursor()
+for team_id_api, team  in list_teams:
+
+    result = DatabaseConnection.set_team_id_api(cursor, 136, team, team_id_api)
+    connection.commit()
+
+cursor.close()
+connection.close()   
+   
 a=1

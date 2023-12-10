@@ -78,7 +78,7 @@ class DatabaseConnection:
     def query_corners(cursor, team_name, type):
         query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
         cursor.execute(query_team_name, (team_name,))
-        result_team_name = cursor.fetchall() 
+        result_team_name = cursor.fetchall()
             
         query_corners = 'SELECT type_corners_id, type FROM type_corners WHERE type LIKE %s'
         cursor.execute(query_corners, (type,))
@@ -97,4 +97,70 @@ class DatabaseConnection:
 
         df_team_name = pd.DataFrame(data, columns=columns)
         return df_team_name
+    
+    def set_team_id_api(cursor, league_id_api, team_name, team_id_api):
+        connection = DatabaseConnection.connect()
         
+        query_league_id = f"SELECT league_id FROM league WHERE api_id = {league_id_api}"           
+        cursor.execute(query_league_id)            
+        league_id = cursor.fetchone()[0]
+
+        try:
+            query_update_team = """
+                UPDATE team
+                SET api_id = %s
+                WHERE name = %s AND league_id = %s
+            """
+            values = (team_id_api, team_name, league_id)
+
+            print(f"Valores da atualização: {values}")
+
+            cursor.execute(query_update_team, values)
+            connection.commit()
+            print(f"Atualização realizada com sucesso.")
+            
+        except mysql.connector.Error as err:
+            print(f"Erro durante a atualização: {err}")
+              
+    def remove_duplicate_rows_from_database(self):
+        connection = DatabaseConnection.connect()
+        cursor = connection.cursor()
+
+        try:            
+            create_temporary_goals_table_query = """
+            CREATE TABLE gols_temp AS
+            SELECT DISTINCT id, tipo, nome, total, casa, fora
+            FROM gols
+            """
+            cursor.execute(create_temporary_goals_table_query)
+            drop_original_goals_table_query = "DROP TABLE gols"
+            cursor.execute(drop_original_goals_table_query)
+            
+            rename_goals_table_query = "RENAME TABLE gols_temp TO gols"
+            cursor.execute(rename_goals_table_query)
+
+            connection.commit()
+            print("Duplicate rows from 'goals' table successfully removed!")
+            
+            create_temporary_corners_table_query  = """
+            CREATE TABLE escanteios_temp AS
+            SELECT DISTINCT id, tipo, nome, total, casa, fora
+            FROM escanteios
+            """
+            cursor.execute(create_temporary_corners_table_query )
+            drop_original_corners_table_query = "DROP TABLE escanteios"
+            cursor.execute(drop_original_corners_table_query)
+            
+            rename_corners_table_query = "RENAME TABLE escanteios_temp TO escanteios"
+            cursor.execute(rename_corners_table_query)
+
+            connection.commit()
+            print("Linhas duplicadas da tabela escanteios excluídas com sucesso!")
+
+        except mysql.connector.Error as e:
+            connection.rollback()
+            print(f"Erro ao excluir linhas duplicadas: {e}")
+
+        finally:
+            cursor.close()
+            connection.close()
