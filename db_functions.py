@@ -6,7 +6,6 @@ import os
 class DatabaseConnection:
     @staticmethod
     def connect():
-        
         load_dotenv()
         connection = mysql.connector.connect(
             host=os.getenv('host'),
@@ -104,24 +103,39 @@ class DatabaseConnection:
         query_league_id = f"SELECT league_id FROM league WHERE api_id = {league_id_api}"           
         cursor.execute(query_league_id)            
         league_id = cursor.fetchone()[0]
-
+        values = None
         try:
-            query_update_team = """
-                UPDATE team
-                SET api_id = %s
-                WHERE name = %s AND league_id = %s
+            query_check_team = """
+                SELECT COUNT(*) FROM team
+                WHERE name = %s AND league_id = %s AND api_id IS NOT NULL
             """
-            values = (team_id_api, team_name, league_id)
-
-            print(f"Valores da atualização: {values}")
-
-            cursor.execute(query_update_team, values)
-            connection.commit()
-            print(f"Atualização realizada com sucesso.")
+            check_values = (team_name, league_id)
+            cursor.execute(query_check_team, check_values)
+            team_already_has_api_id = cursor.fetchone()[0]
             
+            if team_already_has_api_id > 0:
+                pass
+            else:
+                query_update_team = """
+                    UPDATE team
+                    SET api_id = %s
+                    WHERE name = %s AND league_id = %s
+                """
+                values = (team_id_api, team_name, league_id)
+
+                cursor.execute(query_update_team, values)
+                
         except mysql.connector.Error as err:
             print(f"Erro durante a atualização: {err}")
-              
+            
+        finally:
+            if cursor.rowcount > 0:
+                connection.commit()
+            
+            if values is not None:
+                df = pd.DataFrame([values], columns=['api_id', 'name', 'league_id'])
+                return df
+                           
     def remove_duplicate_rows_from_database(self):
         connection = DatabaseConnection.connect()
         cursor = connection.cursor()

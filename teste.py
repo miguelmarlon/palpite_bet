@@ -6,10 +6,21 @@ import requests
 from db_functions import DatabaseConnection
 from dotenv import load_dotenv
 import os
+import pandas as pd
+from functions_api import FunctionsApi
 
 corner_quantities = ['7.5', '8.5','9.5', '10.5', '11.5', '12.5']
 country_list = [['Italy', 'Serie A',135 ]]
 goal_total_quantities = ['Over 1.5']
+
+connection = DatabaseConnection.connect()
+cursor = connection.cursor()
+
+functions_api_instance = FunctionsApi()
+functions_api_instance.search_team_id_api()
+
+cursor.close()
+connection.close()
 
 # for goals_quantity in goal_total_quantities:
 #     for country, league, api_league_id in country_list:
@@ -31,40 +42,47 @@ goal_total_quantities = ['Over 1.5']
 # data_processor_instance.filtered_corners_statistics() 
 
 
-RapidAPI = os.getenv('RapidAPI')
-url = "https://api-football-v1.p.rapidapi.com/v3/teams"
+# RapidAPI = os.getenv('RapidAPI')
+# url = "https://api-football-v1.p.rapidapi.com/v3/teams"
 
-querystring = {"league":"136","season":"2023","country":"Italy"}
+# querystring = {"league":"39","season":"2023","country":"England"}
 
-headers = {
-	"X-RapidAPI-Key": RapidAPI,
-	"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
-}
+# headers = {
+# 	"X-RapidAPI-Key": RapidAPI,
+# 	"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+# }
 
-response = requests.get(url, headers=headers, params=querystring)
-list_teams=[]
+# response = requests.get(url, headers=headers, params=querystring)
+# list_teams=[]
+# result_dfs = []
 
-if response.status_code == 200:
-    json_data = response.json()
-    data = json_data['response']
-    for team in data:
-        id = team['team']['id']
-        name = team['team']['name'].rstrip()
-        list_teams.append([id, name])
-else:
+# if response.status_code == 200:
+#     json_data = response.json()
+#     data = json_data['response']
+#     for team in data:
+#         id = team['team']['id']
+#         name = team['team']['name'].rstrip()
+#         list_teams.append([id, name])
+# else:
     
-    print(f"Erro na solicitação: {response.status_code}")
+#     print(f"Erro na solicitação: {response.status_code}")
     
-print(list_teams)
+# print(list_teams)
 
-connection = DatabaseConnection.connect()
-cursor = connection.cursor()
-for team_id_api, team  in list_teams:
+# connection = DatabaseConnection.connect()
+# cursor = connection.cursor()
+# for team_id_api, team  in list_teams:
 
-    result = DatabaseConnection.set_team_id_api(cursor, 136, team, team_id_api)
-    connection.commit()
+#     result = DatabaseConnection.set_team_id_api(cursor, 39, team, team_id_api)
+#     connection.commit()
 
-cursor.close()
-connection.close()   
+#     if result is not None:
+#        result_dfs.append(result)
+
+# final_result_df = pd.concat(result_dfs, ignore_index=True)
+# final_result_df.to_excel('teams_not_updated.xlsx', index=False)
+    
+# cursor.close()
+# connection.close()
    
 a=1
