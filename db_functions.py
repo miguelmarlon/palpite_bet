@@ -51,10 +51,10 @@ class DatabaseConnection:
         
         connection.commit()
     
-    def query_goals(cursor, table, team_name, type):
-        query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
-        cursor.execute(query_team_name, (team_name,))
-        result_team_name = cursor.fetchall() 
+    def query_goals(cursor, table, team_id, type):
+        query_team_name = 'SELECT team_id, name FROM team WHERE api_id = %s'
+        cursor.execute(query_team_name, (team_id,))
+        result_team_name = cursor.fetchall()
             
         query_type_goal = 'SELECT type_goal_id, type FROM type_goals WHERE type LIKE %s'
         cursor.execute(query_type_goal, (type,))
@@ -74,9 +74,9 @@ class DatabaseConnection:
         df_team_name = pd.DataFrame(data, columns=columns)
         return df_team_name
     
-    def query_corners(cursor, team_name, type):
+    def query_corners(cursor, team_id, type):
         query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
-        cursor.execute(query_team_name, (team_name,))
+        cursor.execute(query_team_name, (team_id,))
         result_team_name = cursor.fetchall()
             
         query_corners = 'SELECT type_corners_id, type FROM type_corners WHERE type LIKE %s'

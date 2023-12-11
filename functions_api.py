@@ -18,13 +18,15 @@ class FunctionsApi:
                         ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89], 
                         ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
                         ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]
-                       
-        self.list_country_id_for_search_next_day_games = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
-                        ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
-                        ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
-                        ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89],['France', 'Coupe de France', 66],['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848], 
-                        ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
-                        ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]
+        
+        self.list_country_id_for_search_next_day_games = [['Europa','UEFA Champions League', 2],['England', 'Championship', 40]]
+                      
+        # self.list_country_id_for_search_next_day_games = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
+        #                 ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
+        #                 ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
+        #                 ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89],['France', 'Coupe de France', 66],['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848], 
+        #                 ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
+        #                 ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]
         
         self.current_date = datetime.now()
         self.next_date = self.current_date + timedelta(days=1)
@@ -53,6 +55,7 @@ class FunctionsApi:
             if response.status_code == 200:
                 json_data = response.json()
                 data = json_data['response']
+                print(data)
                 for team in data:
                     id = team['team']['id']
                     name = team['team']['name'].rstrip()
@@ -85,12 +88,12 @@ class FunctionsApi:
     def search_next_day_games(self):
         
         url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
-        team_names = []
+        team_id = []
         final_team_list = []
         RapidAPI = os.getenv('RapidAPI')
         
         for country_list in self.list_country_id_for_search_next_day_games:
-            query_params = {"date": "2023-12-08", "league": country_list[2], "season": "2023"}
+            query_params = {"date": self.formatted_next_date_for_api_search , "league": country_list[2], "season": "2023"}
             headers = {
                 "X-RapidAPI-Key": RapidAPI,
                 "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
@@ -105,17 +108,17 @@ class FunctionsApi:
             
             if "response" in data and data["response"]:
                 for game in data["response"]:
-                    home_team_name = game["teams"]["home"]["name"].rstrip()
-                    away_team_name = game["teams"]["away"]["name"].rstrip()
-                    team_names.append([home_team_name, away_team_name])  
+                    home_team_name = game["teams"]["home"]["name"]
+                    home_team_id = game["teams"]["home"]["id"]
+                    away_team_name = game["teams"]["home"]["name"]
+                    away_team_id = game["teams"]["away"]["id"]
+                    team_id.append([home_team_name, home_team_id, away_team_name, away_team_id])
             else:
                 print(f"No games found for {country_list[0]} {country_list[1]}")  
-            
-            final_team_list.append([team_names])  
-        print(team_names)
-        for home_team, away_team in team_names:       
-            data_processor_obj = DataProcessor(home_team, away_team)
-            data_processor_obj.filtered_goal_statistics()   
+                               
+        for home_team, home_team_id, away_team, away_team_id in team_id:       
+            data_processor_obj = DataProcessor(home_team_id, away_team_id)
+            data_processor_obj.filtered_goal_statistics()
             # data_processor_obj.filtered_corners_statistics()
 
     

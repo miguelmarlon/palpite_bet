@@ -17,7 +17,7 @@ connection = DatabaseConnection.connect()
 cursor = connection.cursor()
 
 functions_api_instance = FunctionsApi()
-functions_api_instance.search_team_id_api()
+functions_api_instance.search_next_day_games()
 
 cursor.close()
 connection.close()
