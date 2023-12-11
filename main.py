@@ -1,19 +1,18 @@
 from data_processor import DataProcessor
 from dotenv import load_dotenv
 import os
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 from create_database import CreateDatabase
-
-
-def search_team_by_name(cursor, team_name):
-        team_query = "SELECT * FROM goals WHERE name LIKE %s"
-        cursor.execute(team_query, (f'%{team_name}%',))
-        return cursor.fetchall()
+from send_telegram_message import *
     
 conexao = DatabaseConnection.connect()
 cursor = conexao.cursor()
 load_dotenv()
 teams_list= []
+
+#criar no main uma maneira mais robusta de consultar os nomes dos times.
+#chamar a função search games
+#melhorar o menu de opções
 
 print()
 print('******************WELCOME TO THE PROGRAM!******************')
@@ -31,10 +30,12 @@ while True:
             print('EXITING THE PROGRAM...')
             exit()
         case '1':
-            
+            games_date= input('What is the date of the games?\n EXAMPLE:\n 22-11\n')
+            games_day = f'🤑🤑⚽ PALPITES PARA O DIA {games_date} ⚽🤑🤑'
             while True:
+                
                 home_team = input('ENTER THE NAME OF THE HOME TEAM:')
-                result_home = search_team_by_name(cursor, home_team)
+                result_home = DatabaseConnection.search_team_by_name(cursor, home_team)
 
                 if result_home:
                     home_team_names = set(row[2] for row in result_home)
@@ -52,7 +53,7 @@ while True:
                         print(f"The chosen team name is: {home_team}")
 
                     away_team = input('ENTER THE NAME OF THE AWAY TEAM:')
-                    result_away = search_team_by_name(cursor, away_team)
+                    result_away = DatabaseConnection.search_team_by_name(cursor, away_team)
 
                     if result_away:
                         away_team_names = set(row[2] for row in result_away)
@@ -81,7 +82,8 @@ while True:
                     print('WAIT A MOMENT TO FINISH :)')
                     print()
                     break
-                
+            
+            asyncio.run(send_message_with_retry(games_day))  
             for time_casa, time_fora in teams_list:    
                 tratando_dados_objeto = DataProcessor(time_casa, time_fora)       
                 df_gols = tratando_dados_objeto.filtered_goal_statistics()
@@ -97,9 +99,13 @@ while True:
             
         case '3':
             criando_banco_de_dados_gols_obj = CreateDatabase()
-            criando_banco_de_dados_gols_obj.create_goals_database()
+            criando_banco_de_dados_gols_obj.create_goals_total_database()
             criando_banco_de_dados_escanteios_obj = CreateDatabase()
             criando_banco_de_dados_escanteios_obj.create_corners_database()
+            create_db_goals_scored_instance = CreateDatabase()
+            create_db_goals_scored_instance.create_goals_scored_database()
+            create_db_goals_conceded_instance = CreateDatabase()
+            create_db_goals_conceded_instance.create_goals_conceded_database()
             break
         
         case '4':

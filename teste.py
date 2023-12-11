@@ -1,15 +1,88 @@
+from scraping_team_goals_total import Goals
+from scraping_corners import Corners
 from scraping_team_goals import TeamGoals
 from data_processor import DataProcessor
+import requests
+from db_functions import DatabaseConnection
+from dotenv import load_dotenv
+import os
+import pandas as pd
+from functions_api import FunctionsApi
 
-country, league, goal_quantity= 'Germany' , 'Bundesliga'  , 'Over 2.5'
+corner_quantities = ['7.5', '8.5','9.5', '10.5', '11.5', '12.5']
+country_list = [['Italy', 'Serie A',135 ]]
+goal_total_quantities = ['Over 1.5']
 
-team_goals_obj = TeamGoals(country, league, goal_quantity)
-team_goals_obj.create_goals_scored_database()
+connection = DatabaseConnection.connect()
+cursor = connection.cursor()
 
-team_goals_obj = TeamGoals(country, league, goal_quantity)
-team_goals_obj.create_goals_conceded_database()
+functions_api_instance = FunctionsApi()
+functions_api_instance.search_next_day_games()
 
-# data_processor_obj = DataProcessor('Wolfsburg','Ein Frankfurt')
-# #data_processor_obj.additional_goals_statistics()
-# data_processor_obj.filtered_goal_statistics()
+cursor.close()
+connection.close()
+
+# for goals_quantity in goal_total_quantities:
+#     for country, league, api_league_id in country_list:
+#         goals_instance = Goals(country, league, goals_quantity, api_league_id)
+#         data = goals_instance.create_goals_scored_conceded_table()
+        
+# for corner_quantity in corner_quantities:
+#     for country, league, api_league_id in country_list:        
+#         corners_instance = Corners(country, league, corner_quantity)
+#         data= corners_instance.update_corners_table()
+
+# for goals_quantity in goal_total_quantities:
+#     for country, league, api_league_id in country_list:
+#         goals_instance = TeamGoals(country, league, goals_quantity, api_league_id)
+#         data = goals_instance.create_goals_scored_table()
+#         data = goals_instance.create_goals_conceded_table()
+
+# data_processor_instance = DataProcessor('Bayern Munich', 'Dortmund')       
+# data_processor_instance.filtered_corners_statistics() 
+
+
+# RapidAPI = os.getenv('RapidAPI')
+# url = "https://api-football-v1.p.rapidapi.com/v3/teams"
+
+# querystring = {"league":"39","season":"2023","country":"England"}
+
+# headers = {
+# 	"X-RapidAPI-Key": RapidAPI,
+# 	"X-RapidAPI-Host": "api-football-v1.p.rapidapi.com"
+# }
+
+# response = requests.get(url, headers=headers, params=querystring)
+# list_teams=[]
+# result_dfs = []
+
+# if response.status_code == 200:
+#     json_data = response.json()
+#     data = json_data['response']
+#     for team in data:
+#         id = team['team']['id']
+#         name = team['team']['name'].rstrip()
+#         list_teams.append([id, name])
+# else:
+    
+#     print(f"Erro na solicitação: {response.status_code}")
+    
+# print(list_teams)
+
+# connection = DatabaseConnection.connect()
+# cursor = connection.cursor()
+# for team_id_api, team  in list_teams:
+
+#     result = DatabaseConnection.set_team_id_api(cursor, 39, team, team_id_api)
+#     connection.commit()
+
+#     if result is not None:
+#        result_dfs.append(result)
+
+# final_result_df = pd.concat(result_dfs, ignore_index=True)
+# final_result_df.to_excel('teams_not_updated.xlsx', index=False)
+    
+# cursor.close()
+# connection.close()
+   
 a=1

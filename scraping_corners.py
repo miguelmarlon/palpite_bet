@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from database_connection import DatabaseConnection
+from db_functions import DatabaseConnection
 import mysql.connector
 
 class Corners:
@@ -17,7 +17,7 @@ class Corners:
         self.league = league
         self.corner_quantity = corner_quantity
 
-    def create_corners_database(self):
+    def create_corners_table(self):
 
         my_list = []
         team_list = []
@@ -26,21 +26,24 @@ class Corners:
         options.add_argument('window-size=800,1200')
 
         browser = webdriver.Chrome(options=options)
-        wait = WebDriverWait(browser, 10)
+        wait = WebDriverWait(browser, 30)
         browser.get('https://www.adamchoi.co.uk/corners/detailed')
 
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
         select = Select(league_button)
+        sleep(1)
         select.select_by_visible_text(self.country)
 
         league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
         select = Select(league_button)
+        sleep(1)
         select.select_by_visible_text(self.league)
 
         select_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="page-wrapper"]/div/div[3]/div/div[2]/div/select')))
         select = Select(select_element)
+        sleep(1)
         select.select_by_visible_text(self.corner_quantity)
-        sleep(3)
+        sleep(2)
 
         page_content = browser.page_source
         site = BeautifulSoup(page_content, 'html.parser')
@@ -100,20 +103,60 @@ class Corners:
             my_list.append(team_list)
 
         connection = DatabaseConnection.connect()
-        cursor = connection.cursor()
+        cursor = connection.cursor(buffered=True)
+        variable_amount_corners = float(self.corner_quantity)
 
         for line in my_list:
             team_name, total, home, away = line
-            query = 'INSERT INTO corners (type, name, total, home, away, country, league) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-            values = (self.corner_quantity, team_name, total, home, away, self.country, self.league)
-            cursor.execute(query, values)
-
+            print(team_name, total, home, away)
+            
+            if variable_amount_corners == 7.5:
+                type_id = 1
+            elif variable_amount_corners == 8.5:
+                type_id = 2       
+            elif variable_amount_corners == 9.5:
+                type_id = 3 
+            elif variable_amount_corners == 10.5:
+                type_id = 4
+            elif variable_amount_corners == 11.5:
+                type_id = 5 
+            elif variable_amount_corners == 12.5:
+                type_id = 6 
+            
+            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
+            if search_team:
+                print("Continuing to next team")
+                
+            else:
+                DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)                                
+                                                  
+            team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
+            if team_id_result:
+                team_id = team_id_result[0]
+                query_check_duplicate = (
+                    "SELECT 1 FROM corners "
+                    "WHERE team_id = %s AND type_id = %s"
+                )
+                cursor.execute(query_check_duplicate, (team_id, type_id))
+                
+                if cursor.fetchone():
+                    continue
+                                            
+                query = 'INSERT INTO corners (team_id, type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
+                values = (team_id, type_id, total, home, away)
+                try:
+                    cursor.execute(query, values)
+                except mysql.connector.Error as err:
+                    print(f"MySQL Error: {err}")
+                    connection.rollback()
+            else:
+                print('Id não encontrado')        
         connection.commit()
         connection.close()
 
         return my_list
     
-    def update_corners_database(self):
+    def update_corners_table(self):
 
         my_list = []
         team_list = []
@@ -122,7 +165,7 @@ class Corners:
         options.add_argument('window-size=800,1200')
 
         browser = webdriver.Chrome(options=options)
-        wait = WebDriverWait(browser, 20)
+        wait = WebDriverWait(browser, 30)
         browser.get('https://www.adamchoi.co.uk/corners/detailed')
 
         country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
@@ -198,18 +241,41 @@ class Corners:
         connection = DatabaseConnection.connect()
         cursor = connection.cursor()
 
+        variable_amount_corners = float(self.corner_quantity)
+        
         for line in my_list:
             team_name, total, home, away = line
-            query = "UPDATE corners SET total = %s, home = %s, away = %s WHERE type = %s AND name = %s"
-            corner_type = self.corner_quantity
-            values = (total, home, away, corner_type, team_name)
-
-            try:
-                cursor.execute(query, values)
-            except mysql.connector.Error as err:
-                print(f"MySQL Error: {err}")
-                connection.rollback()
-
+            
+            for linha in my_list:
+                team_name, total, home, away = linha
+                
+                if variable_amount_corners == 7.5:
+                    type_id = 1
+                elif variable_amount_corners == 8.5:
+                    type_id = 2       
+                elif variable_amount_corners == 9.5:
+                    type_id = 3 
+                elif variable_amount_corners == 10.5:
+                    type_id = 4
+                elif variable_amount_corners == 11.5:
+                    type_id = 5 
+                elif variable_amount_corners == 12.5:
+                    type_id = 6 
+                               
+                team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
+                
+                if team_id_result:
+                    team_id = team_id_result[0]
+                    query_update = "UPDATE corners SET total = %s, home = %s, away = %s WHERE team_id = %s AND type_id = %s"
+                    
+                    values = (total, home, away, team_id, type_id)
+            
+                    try:
+                        cursor.execute(query_update, values)
+                    except mysql.connector.Error as err:
+                        print(f"Erro MySQL: {err}")
+                        connection.rollback()
+                
         connection.commit()
         connection.close()
 
