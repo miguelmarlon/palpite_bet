@@ -49,39 +49,35 @@ while True:
                         result_home = DatabaseConnection.search_team_by_name(cursor, home_team)
 
                         if result_home:
-                            home_team_names = set(row[2] for row in result_home)
-
-                            if len(home_team_names) == 1:
-                                home_team = result_home[0][2]
+                            
+                            if len(result_home) == 1:
+                                _, home_team_name, _, team_id_home_api = result_home[0]
                             else:
                                 print("Multiple matching teams found. Choose one:")
-                                for i, name in enumerate(home_team_names):
-                                    print(f"{i + 1}. {name}")
+                                for i, (team_id, name, _, _) in enumerate(result_home):
+                                    print(f"{i + 1}- {name}")
 
                                 choice = int(input("Enter the number of the desired team: "))
-                                home_team_names = list(home_team_names)
-                                home_team = home_team_names[choice - 1]
-                                print(f"The chosen team name is: {home_team}")
+                                _, home_team_name, _, team_id_home_api = result_home[choice - 1]
+                                print(f"The chosen team name is: {home_team_name}")
 
                             away_team = input('ENTER THE NAME OF THE AWAY TEAM:')
                             result_away = DatabaseConnection.search_team_by_name(cursor, away_team)
 
                             if result_away:
-                                away_team_names = set(row[2] for row in result_away)
-
-                                if len(away_team_names) == 1:
-                                    away_team = result_away[0][2]
+                                
+                                if len(result_away) == 1:
+                                    _, away_team_name, _, team_id_away_api = result_away[0]
                                 else:
                                     print("Multiple matching teams found. Choose one:")
-                                    for i, name in enumerate(away_team_names):
+                                    for i, (team_id, name, _, _) in enumerate(result_away):
                                         print(f"{i + 1}. {name}")
 
                                     choice = int(input("Enter the number of the desired team: "))
-                                    away_team_names = list(away_team_names)
-                                    away_team = away_team_names[choice - 1]
+                                    _, away_team_name, _, team_id_away_api = result_away[choice - 1]
                                     print(f"The chosen team name is: {away_team}")
 
-                                temporary_list = [home_team, away_team]
+                                temporary_list = [team_id_home_api, team_id_away_api]
                                 teams_list.append(temporary_list)
                             else:
                                 print(f'THE TEAM {away_team} WAS NOT FOUND!')
@@ -99,8 +95,8 @@ while True:
                 case _: 
                     print('INVALID OPTION!')
                     
-            for time_casa, time_fora in teams_list:    
-                tratando_dados_objeto = DataProcessor(time_casa, time_fora)     
+            for id_home, id_away in teams_list:    
+                tratando_dados_objeto = DataProcessor(id_home, id_away)     
                 df_gols = tratando_dados_objeto.filtered_goal_statistics()
                 #df_escanteios = tratando_dados_objeto.filtered_corners_statistics()
             exit()     
@@ -148,5 +144,3 @@ while True:
                 
         case _:
             print('INVALID OPTION!')
-a=1
-a=1

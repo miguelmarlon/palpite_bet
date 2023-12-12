@@ -17,7 +17,7 @@ class DatabaseConnection:
 
     def search_team_by_name(cursor, team_name):
         team_query = "SELECT * FROM team WHERE name LIKE %s"
-        cursor.execute(team_query, (team_name,))
+        cursor.execute(team_query, ('%' + team_name + '%',))
         result = cursor.fetchall()
         return result
     

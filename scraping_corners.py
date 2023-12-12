@@ -123,9 +123,25 @@ class Corners:
             elif variable_amount_corners == 12.5:
                 type_id = 6 
             
-            search_team = DatabaseConnection.search_team_by_name(cursor, team_name)
-            if search_team:
-                print("Continuing to next team")
+            team_id_result = DatabaseConnection.search_and_select_team_id_by_name(cursor, team_name)
+            if team_id_result:
+                team_id = team_id_result[0]
+                query_check_duplicate = (
+                    "SELECT 1 FROM corners "
+                    "WHERE team_id = %s AND type_id = %s"
+                )
+                cursor.execute(query_check_duplicate, (team_id, type_id))
+                
+                if cursor.fetchone():
+                    continue
+                                            
+                query = 'INSERT INTO corners (team_id, type_id, total, home, away) VALUES (%s, %s, %s, %s, %s)'
+                values = (team_id, type_id, total, home, away)
+                try:
+                    cursor.execute(query, values)
+                except mysql.connector.Error as err:
+                    print(f"MySQL Error: {err}")
+                    connection.rollback()
                 
             else:
                 DatabaseConnection.create_team_table(cursor, team_name, self.country, self.league)                                
