@@ -8,7 +8,7 @@ from scraping_team_goals import TeamGoals
   
 class CreateDatabase:
     goal_team_goals_quantities = ['Over 0.5', 'Over 1.5', 'Over 2.5']
-    goal_total_quantities = [ 'Over 2.5', 'Over 3.5'] #'Over 1.5',
+    goal_total_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5'] 
     corner_quantities = ['7.5', '8.5','9.5', '10.5', '11.5', '12.5']
     
     country_list = [['Italy', 'Serie A',135 ], ['Italy', 'Serie B',136 ], ['England', 'Premier League',39 ], ['England', 'Championship',40 ], ['England', 'League One',41], ['England', 'League Two', 42 ], 
@@ -16,7 +16,21 @@ class CreateDatabase:
                 ['Scotland','SPL',179], ['Netherlands', 'Eredivisie',88 ], ['Netherlands', 'Eerste Divisie',89],['Portugal','Portugese Liga NOS', 94],['Turkey','Turkish Super Lig', 203],['Greece','Greek Super League',197],['Belgium','Pro League',144], ['Brazil','Serie A',71],['Brazil','Serie B',72],
                 ['Austria','Bundesliga',218], ['Argentina','Primera Division',128],['Denmark', 'Superliga',119], ['USA','US MLS',253],['Norway','Norwegian Eliteserien',103],['Mexico','Liga MX',262]]
     
-                        
+    def create_country_league_database(self):
+        connection = DatabaseConnection.connect()
+        cursor = connection.cursor()
+        for country_name in set(row[0] for row in self.country_list):
+            cursor.execute("INSERT INTO country (name) VALUES (%s)", (country_name,))
+        
+        for league_data in self.country_list:
+            country_name, league_name, api_id = league_data
+            cursor.execute("""
+                INSERT INTO league (name, api_id, country_id)
+                VALUES (%s, %s, (SELECT country_id FROM country WHERE name = %s))
+            """, (league_name, api_id, country_name))        
+        connection.commit()
+        connection.close()
+        
     def create_goals_total_database(self):
         for goals_quantity in self.goal_total_quantities:
             for country, league, api_id in self.country_list:
