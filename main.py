@@ -31,8 +31,7 @@ while True:
         case '1':
             games_date= input('What is the date of the games?\n EXAMPLE:\n dd-mm-aaaa\n')
             games_day = f'🤑🤑⚽ PALPITES PARA O DIA {games_date} ⚽🤑🤑'
-            
-                        
+                                    
             automatically_or_manually = input('Type 1 to search for the games automatically or 2 to type the games you want:')
             
             match automatically_or_manually:

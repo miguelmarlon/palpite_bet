@@ -19,13 +19,13 @@ class FunctionsApi:
                         ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89], 
                         ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
                         ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]
-                                 
-        self.list_country_id_for_search_next_day_games = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
-                        ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
-                        ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
-                        ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89],['France', 'Coupe de France', 66],['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848], 
-                        ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
-                        ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]   
+        self.list_country_id_for_search_next_day_games = [['England', 'Championship', 40],['Europa','UEFA Champions League', 2]]                        
+        # self.list_country_id_for_search_next_day_games = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
+        #                 ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
+        #                 ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
+        #                 ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89],['France', 'Coupe de France', 66],['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848], 
+        #                 ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
+        #                 ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]   
         
     def search_team_id_api(self):
         
@@ -79,6 +79,9 @@ class FunctionsApi:
             final_result_df.to_excel('teams_not_updated.xlsx', index=False)         
             
     def search_games(self):
+        
+        conexao = DatabaseConnection.connect()
+        cursor = conexao.cursor()
         date_object = datetime.strptime(self.games_date, '%d-%m-%Y')
         date_us_format = date_object.strftime("%Y-%m-%d")
         message_for_next_day_games = f"🤑🤑⚽ PALPITES PARA O DIA {self.games_date} ⚽🤑🤑"
@@ -107,9 +110,18 @@ class FunctionsApi:
                 for game in data["response"]:
                     home_team_name = game["teams"]["home"]["name"]
                     home_team_id = game["teams"]["home"]["id"]
-                    away_team_name = game["teams"]["home"]["name"]
+                    away_team_name = game["teams"]["away"]["name"]
                     away_team_id = game["teams"]["away"]["id"]
-                    list_team_id.append([home_team_name, home_team_id, away_team_name, away_team_id])
+                    
+                    query_home_team_id = 'SELECT team_id FROM team WHERE api_id = %s'
+                    cursor.execute(query_home_team_id, (home_team_id,))
+                    result_home_team_id = cursor.fetchall()
+                    if result_home_team_id:
+                        query_away_team_id = 'SELECT team_id FROM team WHERE api_id = %s'
+                        cursor.execute(query_away_team_id, (away_team_id,))
+                        result_away_team_id = cursor.fetchall()
+                        if result_away_team_id:
+                            list_team_id.append([home_team_name, home_team_id, away_team_name, away_team_id])
             else:
                 print(f"No games found for {country_list[0]} {country_list[1]}")  
         print(list_team_id)                      
@@ -117,8 +129,4 @@ class FunctionsApi:
             data_processor_obj = DataProcessor(home_team_id, away_team_id)
             data_processor_obj.filtered_goal_statistics()
             # data_processor_obj.filtered_corners_statistics()
-
-    
-    # if __name__ == "__main__":
-        # asyncio.run(send_message_with_retry(self.message_for_next_day_games))
-        # search_next_day_games()
+        
