@@ -125,7 +125,7 @@ class FunctionsApi:
             else:
                 print(f"No games found for {country_list[0]} {country_list[1]}")  
         print(list_team_id)                      
-        for home_team, home_team_id, away_team, away_team_id in list_team_id:       
+        for home_team, home_team_id, away_team, away_team_id in list_team_id:    
             data_processor_obj = DataProcessor(home_team_id, away_team_id)
             data_processor_obj.filtered_goal_statistics()
             # data_processor_obj.filtered_corners_statistics()
