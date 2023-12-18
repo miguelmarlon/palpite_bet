@@ -11,8 +11,6 @@ cursor = conexao.cursor()
 load_dotenv()
 teams_list= []
 
-#acerta a busca manual de times
-
 print()
 print('******************WELCOME TO THE PROGRAM!******************')
 print()
@@ -97,19 +95,30 @@ while True:
             for id_home, id_away in teams_list:    
                 tratando_dados_objeto = DataProcessor(id_home, id_away)     
                 df_gols = tratando_dados_objeto.filtered_goal_statistics()
-                #df_escanteios = tratando_dados_objeto.filtered_corners_statistics()
+                df_escanteios = tratando_dados_objeto.filtered_corners_statistics()
             exit()     
             
         case '2':
-            
-            type_update = input("""Enter 1 to update the goal database:\n 
-                                Enter 2 to update the corners database:""")
+            print("""Enter 1 to update goal and corners table:\nEnter 1 to update the goal table:\nEnter 2 to update the corners table:""")
+            type_update = input('Select an option')
             match type_update:
-                case 1:
-                    instance_create_database_gols = CreateDatabase()
-                    instance_create_database_gols.update_goals_database()
+                
+                case '1':
+                    connection = DatabaseConnection.connect()
+                    cursor = connection.cursor()
+                    create_db_goals_instance = CreateDatabase()
+                    create_db_goals_instance.update_goals_database()
+                    
+                    create_db_goals_scored_instance = CreateDatabase()
+                    create_db_goals_scored_instance.update_goals_scored_database()
+                    
+                    create_db_goals_conceded_instance = CreateDatabase()
+                    create_db_goals_conceded_instance.update_goals_conceded_database()
+                    
+                    cursor.close()
+                    connection.close()
                     break
-                case 2:
+                case '2':
                     instance_create_database_corners = CreateDatabase()
                     instance_create_database_corners.update_corners_database()
                     break
@@ -117,22 +126,52 @@ while True:
                     print('INVALID OPTION!')
                     
         case '3':
-            type_create = input("""Enter 1 to create the goal database:\n 
-                                Enter 2 to create the corners database:""")
+            print("""Enter 1 to create goal and corners table:\nEnter 1 to create the goal table:\nEnter 2 to create the corners table:""")
+            type_create = input('Select an option')
+            
+            create_db_goals_instance = CreateDatabase()
+            create_db_goals_instance.create_country_league_database()
+            
             match type_create:
-                case 1:
-                    criando_banco_de_dados_gols_obj = CreateDatabase()
-                    criando_banco_de_dados_gols_obj.create_goals_total_database()
+                case '1':
+                    
+                    connection = DatabaseConnection.connect()
+                    cursor = connection.cursor()
+                    
+                    create_db_goals_instance = CreateDatabase()
+                    create_db_goals_instance.create_goals_total_database()
+                    
                     create_db_goals_scored_instance = CreateDatabase()
                     create_db_goals_scored_instance.create_goals_scored_database()
+                    
                     create_db_goals_conceded_instance = CreateDatabase()
                     create_db_goals_conceded_instance.create_goals_conceded_database()
-                case 2:   
+                    
+                    create_db_corners_instance = CreateDatabase()
+                    create_db_corners_instance.create_corners_database()
+                    
+                    cursor.close()
+                    connection.close()
+                case '2':
+                    connection = DatabaseConnection.connect()
+                    cursor = connection.cursor()
+                    
+                    create_db_goals_instance = CreateDatabase()
+                    create_db_goals_instance.create_goals_total_database()
+                    
+                    create_db_goals_scored_instance = CreateDatabase()
+                    create_db_goals_scored_instance.create_goals_scored_database()
+                    
+                    create_db_goals_conceded_instance = CreateDatabase()
+                    create_db_goals_conceded_instance.create_goals_conceded_database()
+                    
+                    cursor.close()
+                    connection.close()
+                case '3':   
                     criando_banco_de_dados_escanteios_obj = CreateDatabase()
                     criando_banco_de_dados_escanteios_obj.create_corners_database()
                 case _:
-                    print('INVALID OPTION!')
-                    
+                    print('INVALID OPTION!')      
             break
         
         case '4':

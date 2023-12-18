@@ -19,13 +19,13 @@ class FunctionsApi:
                         ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89], 
                         ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
                         ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]
-        self.list_country_id_for_search_next_day_games = [['England', 'Championship', 40],['Europa','UEFA Champions League', 2]]                        
-        # self.list_country_id_for_search_next_day_games = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
-        #                 ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
-        #                 ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
-        #                 ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89],['France', 'Coupe de France', 66],['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848], 
-        #                 ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
-        #                 ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]   
+                                
+        self.list_country_id_for_search_next_day_games = [['Belgium','Pro League', 144],['Greece','Greek Super League', 197],['Scotland','SPL', 179], ['Italy', 'Serie A', 135], ['Italy', 'Serie B', 136],
+                        ['England', 'Premier League', 39], ['England', 'Championship', 40], ['England', 'League One', 41],  ['England', 'League Two', 42],
+                        ['Spain', 'La Liga', 140], ['Spain', 'Segunda Division', 141], ['Germany', 'Bundesliga', 78],['Germany','2. Bundesliga', 79], ['France', 'Ligue 1', 61], ['France', 'Ligue 2', 62],
+                        ['Netherlands', 'Eredivisie', 88], ['Netherlands', 'Eerste Divisie', 89],['France', 'Coupe de France', 66],['Europa','UEFA Champions League', 2],['Europa','UEFA Europa League', 3],['Europa','Europa Conference League', 848], 
+                        ['Portugal', 'Primeira Liga', 94], ['Turkey', 'Super Lig', 203], ['Brazil', 'Serie A', 71], ['Brazil', 'Serie B', 72], 
+                        ['Denmark', 'Superliga', 119], ['USA', 'Major League Soccer', 253], ['Norway', 'Eliteserien', 103], ['Austria', 'Bundesliga', 218], ['Mexico', 'Liga MX', 262], ['Argentina','Primera Division', 128]]   
         
     def search_team_id_api(self):
         

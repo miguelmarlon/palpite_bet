@@ -85,6 +85,9 @@ class DataProcessor:
             object_db_funcitions_away_team_scored = DatabaseConnection.query_goals(cursor,'goals_scored_conceded', self.away_team_id, type)
             df_scored_away_team = pd.concat([df_scored_away_team, object_db_funcitions_away_team_scored])
             
+        df_scored_home_team = df_scored_home_team.reset_index(drop=True)
+        df_scored_away_team = df_scored_away_team.reset_index(drop=True)
+        
         df_result['home_team']= df_scored_home_team['name'] 
         df_result['away_team']= df_scored_away_team['name']
         df_result['type_goal']= df_scored_away_team['type_goal']

@@ -11,9 +11,15 @@ class CreateDatabase:
     goal_total_quantities = ['Over 1.5', 'Over 2.5', 'Over 3.5'] 
     corner_quantities = ['7.5', '8.5','9.5', '10.5', '11.5', '12.5']
     
-    country_list = [['Italy', 'Serie A',135 ], ['Italy', 'Serie B',136 ], ['England', 'Premier League',39 ], ['England', 'Championship',40 ], ['England', 'League One',41], ['England', 'League Two', 42 ], 
+    country_list = [['Italy', 'Serie A',135 ], ['Italy', 'Serie B',136 ],['England', 'Premier League',39 ], ['England', 'Championship',40 ], ['England', 'League One',41], ['England', 'League Two', 42 ], 
                 ['Spain', 'La Liga',140 ], ['Spain', 'Segunda Division',141 ] ,['Germany','Bundesliga',78 ],['Germany','Bundesliga 2',79],['France', 'Ligue 1',61 ],['France', 'Ligue 2',62 ],
                 ['Scotland','SPL',179], ['Netherlands', 'Eredivisie',88 ], ['Netherlands', 'Eerste Divisie',89],['Portugal','Portugese Liga NOS', 94],['Turkey','Turkish Super Lig', 203],['Greece','Greek Super League',197],['Belgium','Pro League',144], ['Brazil','Serie A',71],['Brazil','Serie B',72],
+                ['Austria','Bundesliga',218], ['Argentina','Primera Division',128],['Denmark', 'Superliga',119], ['USA','US MLS',253],['Norway','Norwegian Eliteserien',103],['Mexico','Liga MX',262]]
+    
+    
+    country_list_corners = [['Italy', 'Serie A',135 ], ['Italy', 'Serie B',136 ], ['England', 'Premier League',39 ], ['England', 'Championship',40 ], ['England', 'League One',41], ['England', 'League Two', 42 ], 
+                ['Spain', 'La Liga',140 ], ['Spain', 'Segunda Division',141 ] ,['Germany','Bundesliga',78 ],['Germany','Bundesliga 2',79],['France', 'Ligue 1',61 ],['France', 'Ligue 2',62 ],
+                ['Scotland','SPL',179], ['Netherlands', 'Eredivisie',88 ], ['Netherlands', 'Eerste Divisie',89],['Portugal','Portugese Liga NOS', 94],['Turkey','Turkish Super Lig', 203],['Greece','Greek Super League',197],['Belgium','Pro League',144], ['Brazil','Serie A',71],
                 ['Austria','Bundesliga',218], ['Argentina','Primera Division',128],['Denmark', 'Superliga',119], ['USA','US MLS',253],['Norway','Norwegian Eliteserien',103],['Mexico','Liga MX',262]]
     
     def create_country_league_database(self):
@@ -39,13 +45,15 @@ class CreateDatabase:
                 print(data)
     
     def create_corners_database(self):
+        
         for corner_quantity in self.corner_quantities:
-            for country, league,api_id in self.country_list:
-                corners_instance = Corners(country, league, corner_quantity)
+            for country, league,api_id in self.country_list_corners:
+                corners_instance = Corners(country, league, corner_quantity,api_id)
                 data = corners_instance.create_corners_table()
                 print(data)
     
     def create_goals_scored_database(self):
+        
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league,api_id in self.country_list:
                 team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
@@ -68,9 +76,23 @@ class CreateDatabase:
     
     def update_corners_database(self):
         for corner_quantity in self.corner_quantities:
-            for country, league, api_id in self.country_list:
+            for country, league, api_id in self.country_list_corners:
                 corners_instance = Corners(country, league, corner_quantity, api_id)
                 data = corners_instance.update_corners_table()
+                print(data)
+    
+    def update_goals_scored_database(self):
+        for goals_quantity in self.goal_team_goals_quantities:
+            for country, league,api_id in self.country_list:
+                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
+                data = team_goals_instance.update_goals_scored_table()
+                print(data)
+    
+    def update_goals_conceded_database(self):
+        for goals_quantity in self.goal_team_goals_quantities:
+            for country, league, api_id in self.country_list:
+                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
+                data = team_goals_instance.update_goals_conceded_table()
                 print(data)
     
 
