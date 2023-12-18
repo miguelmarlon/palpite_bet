@@ -141,35 +141,30 @@ class DatabaseConnection:
         cursor = connection.cursor()
 
         try:            
-            create_temporary_goals_table_query = """
-            CREATE TABLE gols_temp AS
-            SELECT DISTINCT id, tipo, nome, total, casa, fora
-            FROM gols
-            """
-            cursor.execute(create_temporary_goals_table_query)
-            drop_original_goals_table_query = "DROP TABLE gols"
-            cursor.execute(drop_original_goals_table_query)
-            
-            rename_goals_table_query = "RENAME TABLE gols_temp TO gols"
-            cursor.execute(rename_goals_table_query)
+            for tabela in ["corners", "goals_conceded", "goals_scored", "goals_scored_conceded", "league", "team", "type_corners", "type_goals"]:
 
-            connection.commit()
-            print("Duplicate rows from 'goals' table successfully removed!")
-            
-            create_temporary_corners_table_query  = """
-            CREATE TABLE escanteios_temp AS
-            SELECT DISTINCT id, tipo, nome, total, casa, fora
-            FROM escanteios
-            """
-            cursor.execute(create_temporary_corners_table_query )
-            drop_original_corners_table_query = "DROP TABLE escanteios"
-            cursor.execute(drop_original_corners_table_query)
-            
-            rename_corners_table_query = "RENAME TABLE escanteios_temp TO escanteios"
-            cursor.execute(rename_corners_table_query)
+                pk_name = tabela.split("_")[-1]
+              
+                cursor = connection.cursor()
+                cursor.execute("SELECT * FROM {}".format(tabela))
 
-            connection.commit()
-            print("Linhas duplicadas da tabela escanteios excluídas com sucesso!")
+                duplicadas = cursor.execute(
+                    f"""
+                    DELETE FROM {tabela}
+                    WHERE {pk_name} IN (
+                        SELECT {pk_name}
+                        FROM (
+                            SELECT {pk_name} AS id, COUNT(*) AS c
+                            FROM {tabela}
+                            GROUP BY {pk_name}
+                            HAVING c > 1
+                        ) AS duplicadas
+                    );
+                    """
+                )
+                
+                if duplicadas:
+                    print("Foram encontradas linhas duplicadas na tabela `{}`.".format(tabela))    
 
         except mysql.connector.Error as e:
             connection.rollback()

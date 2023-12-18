@@ -168,15 +168,15 @@ while True:
                     cursor.close()
                     connection.close()
                 case '3':   
-                    criando_banco_de_dados_escanteios_obj = CreateDatabase()
-                    criando_banco_de_dados_escanteios_obj.create_corners_database()
+                    create_db_corners_instance = CreateDatabase()
+                    create_db_corners_instance.create_corners_database()
                 case _:
                     print('INVALID OPTION!')      
             break
         
         case '4':
-            criando_banco_de_dados_obj = CreateDatabase()
-            criando_banco_de_dados_obj.remove_duplicate_rows_from_database()
+            db_functions_instance = DatabaseConnection()
+            db_functions_instance.remove_duplicate_rows_from_database()
             
             break
                 
