@@ -1,0 +1,273 @@
+Class Main
+
+The main class is responsible for interacting with the user and coordinating the execution of the program's main functionalities, such as team selection, database update, and removal of duplicate rows.
+
+Attributes
+
+teams_list (list)
+Description: List to temporarily store pairs of team IDs selected by the user.
+
+Methods
+
+main_menu(self) -> None
+Description: Displays the main menu and interacts with the user to select the desired option.
+
+enter_team_selection(self) -> None
+Description: Allows the user to manually or automatically select teams, adding pairs of IDs to the teams_list.
+
+update_database(self, update_type: str) -> None
+Description: Updates the database based on the provided update type (goal, corner, or both).
+
+create_database(self, create_type: str) -> None
+Description: Creates tables in the database based on the provided creation type (goal, corner, or both).
+
+remove_duplicate_rows(self) -> None
+Description: Removes duplicate rows from the database.
+
+Class Corners
+
+The Corners class is responsible for interacting with the website https://www.adamchoi.co.uk/corners/detailed, collecting statistics about corner kicks from football teams in a specific league and country, and updating or creating a table in the database with this information.
+
+Attributes
+
+country (str)
+Description: Country of the league for which corner statistics will be collected.
+
+league (str)
+Description: Name of the league for which corner statistics will be collected.
+
+corner_quantity (str)
+Description: Specific quantity of corners to be considered for statistics collection.
+
+Methods
+
+create_corners_table(self) -> Optional[List[List[Union[str, float]]]]
+Description: Collects corner kick statistics from football teams and inserts the data into the database table.
+Return: A list containing lists of information about the teams, or None if the connection fails.
+
+update_corners_table(self)
+Description: Updates corner kick statistics for football teams in the database table.
+Return: A list containing lists of information about the teams, or None if the connection fails.
+
+Class Goals
+
+The Goals class is responsible for extracting goal statistics (total, at home, and away) from football teams on the website https://www.adamchoi.co.uk/overs/detailed and updating or creating corresponding tables in the database. It performs web scraping and data manipulation to maintain information about goals scored and conceded by teams.
+
+Attributes
+
+country (str): The country of the teams for which statistics will be collected.
+league (str): The league of the teams for which statistics will be collected.
+goal_quantity (str): The specific quantity of goals (Over X) for statistics.
+api_country_id (int): The ID of the country associated with the website's API.
+Methods
+
+__init__(self, country: str, league: str, goal_quantity: str, api_country_id: int) -> None
+Description: Initializes an instance of the Goals class.
+Parameters:
+
+country (str): The country of the teams.
+league (str): The league of the teams.
+goal_quantity (str): The specific quantity of goals (Over X).
+api_country_id (int): The ID of the country associated with the website's API.
+create_goals_scored_conceded_table(self)
+Description: Collects statistics of goals scored and conceded by teams and updates the corresponding table in the database.
+Return: A list containing lists representing goal statistics for each team, or None if the connection fails.
+
+update_goals_scored_conceded_table(self)
+Description: Updates goal statistics for teams in the database table.
+Return: A list containing lists representing goal statistics for each team, or None if the connection fails.
+
+
+Class TeamGoals
+
+The TeamGoals class is responsible for collecting and storing statistics related to goals scored and conceded by teams in a specific football league. These statistics are obtained from the website 'https://www.adamchoi.co.uk/teamgoals/detailed' using Selenium and BeautifulSoup.
+
+Method __init__
+
+Initializes a TeamGoals object.
+Parameters:
+country (str): The country of the league.
+league (str): The name of the league.
+goal_quantity (str): The quantity of goals for which statistics will be obtained.
+api_league_id: The ID of the league in the API.
+Method create_goals_scored_table
+
+Obtains and stores statistics related to goals scored by teams based on the provided parameters.
+Returns:
+list: A list containing statistics for each team.
+Method create_goals_conceded_table
+
+Obtains and stores statistics related to goals conceded by teams based on the provided parameters.
+Returns:
+list: A list containing statistics for each team.
+Method update_goals_scored_table
+
+Updates existing statistics related to goals scored by teams based on the provided parameters.
+Returns:
+list: A list containing updated statistics for each team.
+Method update_goals_conceded_table
+
+Updates existing statistics related to goals conceded by teams based on the provided parameters.
+Returns:
+list: A list containing updated statistics for each team.
+
+Class DatabaseConnection
+
+The DatabaseConnection class provides methods to connect to a MySQL database, execute SQL queries related to football teams, and manipulate data stored in the database. Additionally, it contains methods for removing duplicate rows from various tables.
+
+Method connect
+
+Static
+Returns a connection to the MySQL database based on the environment variables defined in the .env file.
+Method search_team_by_name(cursor, team_name)
+
+Executes a query to search for teams whose name contains the provided substring.
+Parameters:
+cursor: Database cursor.
+team_name: Name of the team or part of the name to be searched.
+Returns a list with the query results.
+Method search_and_select_team_id_by_name(cursor, team_name)
+
+Executes a query to search for the ID of a team based on the provided name.
+Parameters:
+cursor: Database cursor.
+team_name: Team name.
+Returns the team ID.
+Method create_team_table(cursor, team_name, country, league)
+
+Creates a new entry in the 'team' table based on the provided parameters.
+Parameters:
+cursor: Database cursor.
+team_name: Team name.
+country: Team country.
+league: Team league name.
+Method query_goals(cursor, table, team_id, type)
+
+Executes an SQL query to retrieve goal statistics for a team.
+Parameters:
+cursor: Database cursor.
+table: Name of the table to be queried.
+team_id: Team ID.
+type: Type of statistic (e.g., '0.5', '1.5', '2.5').
+Method query_corners(cursor, team_id, type)
+
+Executes an SQL query to retrieve corner statistics for a team.
+Parameters:
+cursor: Database cursor.
+team_id: Team ID.
+type: Type of statistic (e.g., '0.5', '1.5', '2.5').
+Method set_team_id_api(cursor, league_id_api, team_name, team_id_api)
+
+Updates the API ID of a team in the 'team' table.
+Parameters:
+cursor: Database cursor.
+league_id_api: League ID in the API.
+team_name: Team name.
+team_id_api: Team ID in the API.
+Returns a Pandas DataFrame with the updated values.
+Method remove_duplicate_rows_from_database
+
+Removes duplicate rows from various tables in the database.
+Prints messages indicating whether duplicate rows were found in each table.
+
+Class FunctionsApi
+
+The FunctionsApi class provides functionalities for interacting with a football API, fetching information about teams and matches. It also utilizes methods from other classes, such as the DatabaseConnection class to interact with a MySQL database and the DataProcessor class to process goal and corner statistics.
+
+Method __init__(self, games_date)
+
+Constructor of the class that initializes the instance with a specific date for fetching games.
+Parameters:
+games_date: Date in the 'dd-mm-yyyy' format.
+Attributes:
+
+games_date: Date of the games.
+list_country_id_for_search_team_id_api: List containing information about countries, leagues, and league IDs to fetch team IDs from the API.
+list_country_id_for_search_next_day_games: List containing information about countries, leagues, and league IDs to fetch future games from the API.
+Method search_team_id_api(self)
+
+Queries the API to obtain team IDs and updates the database.
+Uses the list_country_id_for_search_team_id_api to iterate over different leagues and countries.
+Method search_games(self)
+
+Queries the API to obtain information about future games and executes methods from the DataProcessor class to process statistics for these games.
+Uses the list_country_id_for_search_next_day_games to iterate over different leagues and countries.
+Notes:
+
+The class depends on the DatabaseConnection class to interact with the database.
+It uses environment variables (RapidAPI) for authentication with the football API.
+Prints error messages in case of failed API requests.
+Saves the result in an Excel file named 'teams_not_updated.xlsx' in case of no database update.
+
+Class DataProcessor
+
+The DataProcessor class is responsible for processing statistics related to goals and corners for a specific pair of teams (home and away). It interacts with a MySQL database through the DatabaseConnection class and uses queries to retrieve data about goals and corners. Additionally, the class performs statistical analyses and sends messages based on the results.
+
+Method __init__(self, home_team_id, away_team_id)
+
+Constructor of the class that initializes the instance with the IDs of the home and away teams.
+Parameters:
+home_team_id: ID of the home team.
+away_team_id: ID of the away team.
+Method additional_goals_statistics(self)
+
+Retrieves additional goal statistics for the home and away teams.
+Generates messages with statistics of goals scored and conceded and sends these messages.
+Method filtered_goal_statistics(self)
+
+Performs filtered statistical analyses on the average goals scored and conceded by the teams.
+Generates messages indicating opportunities based on applied filters and calls the additional_goals_statistics method.
+Method filtered_corners_statistics(self)
+
+Performs filtered statistical analyses on the average corners for the teams.
+Generates messages indicating opportunities based on applied filters.
+Notes:
+
+The class uses the DatabaseConnection class to interact with the MySQL database.
+Messages are sent using the send_message_with_retry function, possibly from an asynchronous library.
+Processed data comes from the 'goals_scored', 'goals_conceded', and 'corners' tables in the database.
+The methods utilize various Pandas DataFrames for data manipulation.
+
+
+Class SearchGames
+
+The search_next_day_games function performs a search for soccer games scheduled for the next day based on a specific date, using the football API (api-football). The games are filtered by country and league, and the information is later processed by instances of the DataProcessor class.
+
+Function search_next_day_games():
+
+Parameters: None.
+Returns: No explicit return value.
+Steps:
+
+Initializes the URL and the team_names list to store team names.
+Iterates over the list of countries (list_country_id) to obtain game information.
+Makes a request to the API to get scheduled games for the specified date.
+Processes the JSON response data to extract the names of home and away teams.
+Stores team names in team_names and final_team_list.
+For each pair of teams (home_team, away_team) found, creates an instance of DataProcessor and calls its filtered_goal_statistics and filtered_corners_statistics methods.
+Notes:
+
+API access is done using the requests library.
+The function uses the RapidAPI environment variable for the API key.
+Game data is extracted from the "response" key in the API's JSON response.
+Team names are stored in a team_names list and in final_team_list, which is a list of lists.
+Each pair of teams is processed by instances of the DataProcessor class, which perform statistical analyses on goals and corners.
+Class TelegramMessage
+
+Function send_message(message):
+
+Description: This function uses the python-telegram-bot library to send a message to a specific chat on Telegram.
+Parameters:
+message (str): The message to be sent to the chat.
+Returns: No explicit return value as the function is asynchronous (uses the async keyword).
+Function send_message_with_retry(message):
+
+Description: This function sends a message using the send_message function and handles specific exceptions, such as RetryAfter, which occurs when flood control is exceeded.
+Parameters:
+message (str): The message to be sent to the chat.
+Returns: No explicit return value as the function is asynchronous (uses the async keyword).
+Notes:
+
+Both functions depend on the python-telegram-bot library and require the configuration of environment variables for 'bot_token' and 'chat_id'.
+The send_message_with_retry function handles the RetryAfter exception by waiting for the specified time before retrying (maximum of 300 seconds).
+Other exceptions are caught and display error messages if they occur.
