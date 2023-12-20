@@ -74,9 +74,9 @@ class DatabaseConnection:
         df_team_name = pd.DataFrame(data, columns=columns)
         return df_team_name
     
-    def query_corners(cursor, team_id, type):
-        query_team_name = 'SELECT team_id, name FROM team WHERE name LIKE %s'
-        cursor.execute(query_team_name, (team_id,))
+    def query_corners(cursor, team_id_api, type):
+        query_team_name = 'SELECT team_id, name FROM team WHERE api_id LIKE %s'
+        cursor.execute(query_team_name, (team_id_api,))
         result_team_name = cursor.fetchall()
             
         query_corners = 'SELECT type_corners_id, type FROM type_corners WHERE type LIKE %s'

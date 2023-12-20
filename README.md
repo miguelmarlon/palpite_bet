@@ -229,31 +229,6 @@ Processed data comes from the 'goals_scored', 'goals_conceded', and 'corners' ta
 The methods utilize various Pandas DataFrames for data manipulation.
 
 
-Class SearchGames
-
-The search_next_day_games function performs a search for soccer games scheduled for the next day based on a specific date, using the football API (api-football). The games are filtered by country and league, and the information is later processed by instances of the DataProcessor class.
-
-Function search_next_day_games():
-
-Parameters: None.
-Returns: No explicit return value.
-Steps:
-
-Initializes the URL and the team_names list to store team names.
-Iterates over the list of countries (list_country_id) to obtain game information.
-Makes a request to the API to get scheduled games for the specified date.
-Processes the JSON response data to extract the names of home and away teams.
-Stores team names in team_names and final_team_list.
-For each pair of teams (home_team, away_team) found, creates an instance of DataProcessor and calls its filtered_goal_statistics and filtered_corners_statistics methods.
-Notes:
-
-API access is done using the requests library.
-The function uses the RapidAPI environment variable for the API key.
-Game data is extracted from the "response" key in the API's JSON response.
-Team names are stored in a team_names list and in final_team_list, which is a list of lists.
-Each pair of teams is processed by instances of the DataProcessor class, which perform statistical analyses on goals and corners.
-Class TelegramMessage
-
 Function send_message(message):
 
 Description: This function uses the python-telegram-bot library to send a message to a specific chat on Telegram.

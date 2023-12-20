@@ -60,9 +60,11 @@ class DataProcessor:
             message_away_team += f'{row["type_goal"]}: {row["away"]}%\n'  
                        
         if message_home_team:
-            asyncio.run(send_message_with_retry(message_home_team))
+            instance_send_telegram_message = TelegramMessenger()
+            asyncio.run(instance_send_telegram_message.send_message_with_retry(message_home_team))
         if message_away_team:
-            asyncio.run(send_message_with_retry(message_away_team))
+            instance_send_telegram_message = TelegramMessenger()
+            asyncio.run(instance_send_telegram_message.send_message_with_retry(message_away_team))
               
         cursor.close()
         connection.close()
@@ -128,7 +130,8 @@ class DataProcessor:
         message += message_goals_below
         
         if message:
-            asyncio.run(send_message_with_retry(message))
+            instance_send_telegram_message = TelegramMessenger()
+            asyncio.run(instance_send_telegram_message.send_message_with_retry(message))
             self.additional_goals_statistics()
         cursor.close()
         connection.close()
@@ -151,14 +154,14 @@ class DataProcessor:
             object_db_funcitions_away_team_corners = DatabaseConnection.query_corners(cursor, self.away_team_id, type)
             df_corners_away_team = pd.concat([df_corners_away_team, object_db_funcitions_away_team_corners])
         
-        print(df_corners_home_team)
-        print(df_corners_away_team)
+        df_corners_home_team = df_corners_home_team.reset_index(drop=True)
+        df_corners_away_team = df_corners_away_team.reset_index(drop=True)
                
         df_result['home_team']= df_corners_home_team['name'] 
         df_result['away_team']= df_corners_away_team['name']
         df_result['type_corners']= df_corners_away_team['type_corners']
         df_result['total']= (df_corners_home_team['total'] + df_corners_away_team['total'])/2
-        df_result['average_home_away']= (df_corners_home_team['home']+ df_corners_away_team['away'])/2      
+        df_result['average_home_away']= (df_corners_home_team['home']+ df_corners_away_team['away'])/2     
         
         df_filtered_corners_above = df_result[(df_result['total'] >= 70) & (df_result['average_home_away'] >= 70)]
         df_filtered_corners_below = df_result[(df_result['total'] <= 25) & (df_result['average_home_away'] <= 25)]
@@ -167,24 +170,29 @@ class DataProcessor:
         print(df_filtered_corners_below)
           
         if not df_filtered_corners_above.empty:
-            message_corners_above = f"⚽Oportunidades para {self.home_team} vs {self.away_team} ⚽:\n\n"
-            for index, row in df_filtered_corners_above.iterrows():
-                corners = row['type_corners']
-                home_vs_away = row['average_home_away']
-                message_corners_above += f"Escanteios acima de {corners}: {home_vs_away}% 🎌\n"
+            for home_team in df_filtered_corners_above['home_team'].astype(str).values:
+                for away_team in df_filtered_corners_above['away_team'].astype(str).values:
+                    message_corners_above = f"⚽Oportunidades para {home_team} vs {away_team} ⚽:\n\n"
+                    for index, row in df_filtered_corners_above.iterrows():
+                        corners = row['type_corners']
+                        home_vs_away = row['average_home_away']
+                        message_corners_above += f"Escanteios acima de {corners}: {home_vs_away}% 🎌\n"
 
         if not df_filtered_corners_below.empty:
-            message_corners_below = f"⚽Oportunidades para {self.home_team} vs {self.away_team} ⚽:\n\n"
-            for index, row in df_filtered_corners_below.iterrows():
-                corners = row['type_corners']
-                home_vs_away = 100 - row['average_home_away']
-                message_corners_below += f"Escanteios abaixo de {corners}: {home_vs_away}% 🎌\n"
+            for home_team in df_filtered_corners_below['home_team'].astype(str).values:
+                for away_team in df_filtered_corners_below['away_team'].astype(str).values:
+                    message_corners_below = f"⚽Oportunidades para {home_team} vs {away_team} ⚽:\n\n"
+                    for index, row in df_filtered_corners_below.iterrows():
+                        corners = row['type_corners']
+                        home_vs_away = 100 - row['average_home_away']
+                        message_corners_below += f"Escanteios abaixo de {corners}: {home_vs_away}% 🎌\n"
 
         message += message_corners_above
         message += message_corners_below
 
         if message:
-            asyncio.run(send_message_with_retry(message))
+            instance_send_telegram_message = TelegramMessenger()
+            asyncio.run(instance_send_telegram_message.send_message_with_retry(message))
 
         cursor.close()
         connection.close()

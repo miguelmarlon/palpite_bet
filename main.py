@@ -3,8 +3,9 @@ from dotenv import load_dotenv
 import os
 from db_functions import DatabaseConnection
 from create_database import CreateDatabase
-from send_telegram_message import *
+from send_telegram_message import TelegramMessenger
 from functions_api import FunctionsApi
+import asyncio
     
 conexao = DatabaseConnection.connect()
 cursor = conexao.cursor()
@@ -86,8 +87,8 @@ while True:
                             print('WAIT A MOMENT TO FINISH :)')
                             print()
                             break
-                    
-                    asyncio.run(send_message_with_retry(games_day))
+                    instance_send_telegram_message = TelegramMessenger()
+                    asyncio.run(instance_send_telegram_message.send_message_with_retry(games_day))
                      
                 case _: 
                     print('INVALID OPTION!')
@@ -99,8 +100,8 @@ while True:
             exit()     
             
         case '2':
-            print("""Enter 1 to update goal and corners table:\nEnter 1 to update the goal table:\nEnter 2 to update the corners table:""")
-            type_update = input('Select an option')
+            print("""Enter 1 to update goal and corners table:\nEnter 2 to update the corners table:\nEnter 3 to update the goal table:""")
+            type_update = input('Select an option: ')
             match type_update:
                 
                 case '1':
@@ -122,12 +123,16 @@ while True:
                     instance_create_database_corners = CreateDatabase()
                     instance_create_database_corners.update_corners_database()
                     break
+                case '3':
+                    create_db_goals_instance = CreateDatabase()
+                    create_db_goals_instance.update_goals_database()
+                    break
                 case _:
                     print('INVALID OPTION!')
                     
         case '3':
             print("""Enter 1 to create goal and corners table:\nEnter 1 to create the goal table:\nEnter 2 to create the corners table:""")
-            type_create = input('Select an option')
+            type_create = input('Select an option: ')
             
             create_db_goals_instance = CreateDatabase()
             create_db_goals_instance.create_country_league_database()

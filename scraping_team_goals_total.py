@@ -12,12 +12,11 @@ from db_functions import DatabaseConnection
 from selenium.common.exceptions import WebDriverException, TimeoutException
 
 class Goals:
-    def __init__(self, country, league, goal_quantity, api_country_id):
+    def __init__(self, country, league, goal_quantity):
         self.country = country
         self.league = league
         self.goal_quantity = goal_quantity
-        self.api_country_id = api_country_id
-        
+                
     def create_goals_scored_conceded_table(self):
         connection_attempts = 5
 

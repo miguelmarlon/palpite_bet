@@ -5,7 +5,7 @@ from data_processor import DataProcessor
 import asyncio
 from dotenv import load_dotenv
 import os
-from send_telegram_message import *
+from send_telegram_message import TelegramMessenger
 from db_functions import DatabaseConnection
 import pandas as pd
 
@@ -89,7 +89,8 @@ class FunctionsApi:
         url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
         list_team_id = []
         RapidAPI = os.getenv('RapidAPI')
-        asyncio.run(send_message_with_retry(message_for_next_day_games))
+        instance_send_telegram_message = TelegramMessenger()
+        asyncio.run(instance_send_telegram_message.send_message_with_retry(message_for_next_day_games))
         
         for country_list in self.list_country_id_for_search_next_day_games:
             query_params = {"date": date_us_format , "league": country_list[2], "season": "2023"}

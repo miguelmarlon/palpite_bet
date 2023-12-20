@@ -40,7 +40,7 @@ class CreateDatabase:
     def create_goals_total_database(self):
         for goals_quantity in self.goal_total_quantities:
             for country, league, api_id in self.country_list:
-                goals_instance = Goals(country, league, goals_quantity, api_id)
+                goals_instance = Goals(country, league, goals_quantity)
                 data = goals_instance.create_goals_scored_conceded_table()
                 print(data)
     
@@ -48,7 +48,7 @@ class CreateDatabase:
         
         for corner_quantity in self.corner_quantities:
             for country, league,api_id in self.country_list_corners:
-                corners_instance = Corners(country, league, corner_quantity,api_id)
+                corners_instance = Corners(country, league, corner_quantity)
                 data = corners_instance.create_corners_table()
                 print(data)
     
@@ -56,42 +56,42 @@ class CreateDatabase:
         
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league,api_id in self.country_list:
-                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
+                team_goals_instance = TeamGoals(country, league, goals_quantity)
                 data = team_goals_instance.create_goals_scored_table()
                 print(data)
     
     def create_goals_conceded_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league, api_id in self.country_list:
-                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
+                team_goals_instance = TeamGoals(country, league, goals_quantity)
                 data = team_goals_instance.create_goals_conceded_table()
                 print(data)
 
     def update_goals_database(self):
         for goals_quantity in self.goal_total_quantities:
             for country, league, api_id in self.country_list:
-                goals_instance = Goals(country, league, goals_quantity,api_id)
+                goals_instance = Goals(country, league, goals_quantity)
                 data = goals_instance.update_goals_scored_conceded_table()
                 print(data)
     
     def update_corners_database(self):
         for corner_quantity in self.corner_quantities:
             for country, league, api_id in self.country_list_corners:
-                corners_instance = Corners(country, league, corner_quantity, api_id)
+                corners_instance = Corners(country, league, corner_quantity)
                 data = corners_instance.update_corners_table()
                 print(data)
     
     def update_goals_scored_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league,api_id in self.country_list:
-                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
+                team_goals_instance = TeamGoals(country, league, goals_quantity)
                 data = team_goals_instance.update_goals_scored_table()
                 print(data)
     
     def update_goals_conceded_database(self):
         for goals_quantity in self.goal_team_goals_quantities:
             for country, league, api_id in self.country_list:
-                team_goals_instance = TeamGoals(country, league, goals_quantity, api_id)
+                team_goals_instance = TeamGoals(country, league, goals_quantity)
                 data = team_goals_instance.update_goals_conceded_table()
                 print(data)
     
