@@ -116,6 +116,9 @@ while True:
                     create_db_goals_conceded_instance = CreateDatabase()
                     create_db_goals_conceded_instance.update_goals_conceded_database()
                     
+                    instance_create_database_corners = CreateDatabase()
+                    instance_create_database_corners.update_corners_database()
+                    
                     cursor.close()
                     connection.close()
                     break
