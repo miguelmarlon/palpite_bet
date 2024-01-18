@@ -35,17 +35,17 @@ class Corners:
 
                 league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
                 select = Select(league_button)
-                sleep(1)
+                
                 select.select_by_visible_text(self.country)
 
                 league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
                 select = Select(league_button)
-                sleep(1)
+                
                 select.select_by_visible_text(self.league)
 
                 select_element = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="page-wrapper"]/div/div[3]/div/div[2]/div/select')))
                 select = Select(select_element)
-                sleep(1)
+                
                 select.select_by_visible_text(self.corner_quantity)
                 sleep(2)
 

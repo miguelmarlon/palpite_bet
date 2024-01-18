@@ -34,12 +34,12 @@ class TeamGoals:
                 
                 country_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="country"]')))
                 select = Select(country_button)
-                sleep(1)
+                
                 select.select_by_visible_text(self.country)
                         
                 league_button = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="league"]')))
                 select = Select(league_button)
-                sleep(1)
+                
                 select.select_by_visible_text(self.league)
                 
                 over_button = wait.until(EC.visibility_of_element_located((By.XPATH, f'(//label[normalize-space()="{self.goal_quantity}"])[1]'))).click()
